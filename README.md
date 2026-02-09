@@ -8,12 +8,13 @@
 Simulations are run using LISFLOOD-FP v8.1.0 to a point of “stability,” where inflow rainfall equals the outflow rate. This process is repeated for various excess rainfall intensities. The resulting “stable” flood depths for each intensity are aggregated into a single data cube (NetCDF), representing flood depth across multiple intensities over the watershed. <br><br>
 These scripts were developed in support of the National Weather Service (Research Project NA22NWS4320003 / A25-0366-S018).
 
-<img src="/doc/lisflood2fim.gif" align="center"
-     alt="sample cross section" width="55%">
+<p align="center">
+  <img src="/doc/lisflood2fim.gif" alt="sample cross section" width="55%">
+</p>
 
-  - **Technology stack**: Scripts were all developed in Python 3.11<br><br>
-  - **Status**:  Version 0.1- Preliminary release. (2026.02.09)<br><br>
-  - **Related Projects**: Bridge database was created using the TX-Bridge repository.  https://github.com/andycarter-pe/ras2fim-2d<br>
+  - **Technology stack**: Scripts were all developed in Python 3.11<br>
+  - **Status**:  Version 0.1- Preliminary release. (2026.02.09)<br>
+  - **Related Projects**: Flood Inundation Maps from HEC-RAS 2D models  https://github.com/andycarter-pe/ras2fim-2d<br>
   
 ## Dockerfile
 To build a container from this repository, clone to your local drive and build with the following command
