@@ -9,7 +9,7 @@
 #   - LISFLOOD-FP compiled with OpenMP, NetCDF, and NUMA support
 #   - LISFLOOD-FP executable in /usr/local/bin as 'lisflood' and symlink 'lisflood_fp'
 #   - WhiteboxTools installed as 'whitebox_tools' and symlink 'wbt'
-#   - Default working directory: /data
+#   - Default working directory: /app
 ################################################################################
 
 # Base image
@@ -142,4 +142,5 @@ WORKDIR /app
 RUN git clone https://github.com/andycarter-pe/lisflood2fim.git /app/lisflood2fim
 
 # Default command
+
 CMD ["/bin/bash"]
