@@ -4,13 +4,12 @@
 <img src="/doc/lisflood2fim-logo-20260209.png" align="right"
      alt="lisflood2fim logo" width="160" height="160">
 
-**Description**:  LISFLOOD2FIM creates flood inundation maps (FIM) indexed to various excess rainfall rates for a given catchment (watershed).  The inital routine determines the stream network on which to apply the excess precipitation.  This requires hydroenforecment buring through dams and roadways.  Then input data needed for LISFLOOD-FP is created including paramters, terrain, boundary conditions and stream centeric rainfall.<br>
-The runs are simulated with LISFLOOD-FP v8.1.0 to a point of 'stability' where the inflow rainfall is equal to the outflow rate.  This is run for various excess rainfall initensities.  The 'stable' flood depths for each intensity and aggregated into a single datacube (netCDF) respresenting the depth of flooding for multiple intensities over a given watershed. <br>
-These scripts were created in support of the National Weather Service (Research Project NA22NWS4320003 / A25-0366-S018) research project.
-
+**Description**:  LISFLOOD2FIM creates Flood Inundation Maps (FIMs) indexed to various excess rainfall rates for a given catchment (watershed). The initial routine determines the stream network on which to apply the excess precipitation. This requires hydro-enforcement through dams and roadways. Input data needed for LISFLOOD-FP is then created, including parameters, terrain, boundary conditions, and stream-centric rainfall..<br><br>
+Simulations are run using LISFLOOD-FP v8.1.0 to a point of “stability,” where inflow rainfall equals the outflow rate. This process is repeated for various excess rainfall intensities. The resulting “stable” flood depths for each intensity are aggregated into a single data cube (NetCDF), representing flood depth across multiple intensities over the watershed. <br><br>
+These scripts were developed in support of the National Weather Service (Research Project NA22NWS4320003 / A25-0366-S018).
 
 <img src="/doc/lisflood2fim.gif" align="center"
-     alt="sample cross section" width="60%">
+     alt="sample cross section" width="55%">
 
   - **Technology stack**: Scripts were all developed in Python 3.11<br><br>
   - **Status**:  Version 0.1- Preliminary release. (2026.02.09)<br><br>
