@@ -134,10 +134,12 @@ RUN /opt/miniconda/bin/conda init bash
 # -------------------------------
 # Set default working directory for simulations
 # -------------------------------
-WORKDIR /data
+WORKDIR /app
+
+# -------------------------------
+# Clone the lisflood2fim repository
+# -------------------------------
+RUN git clone https://github.com/andycarter-pe/lisflood2fim.git /app/lisflood2fim
 
 # Default command
 CMD ["/bin/bash"]
-
-
-
