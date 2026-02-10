@@ -939,12 +939,12 @@ def fn_prepare_input_layers_01(
         f"--max_cost=500",
         f"--flat_increment=0.001"]
     
-    subprocess.run(cmd)
+    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
     
     # Step 2 -- Flow Accumulation (Pass 01)
     # --- Fill DEM depressions ---
     wbt.fill_depressions(str_dem_breach_filepath, str_dem_filled_filepath)
-    print(f" ------ {str_dem_filled_filepath}")
+
     # --- Flow direction ---
     wbt.d8_pointer(str_dem_filled_filepath, str_dem_fdir_filepath)
     
@@ -963,8 +963,7 @@ def fn_prepare_input_layers_01(
         f"--threshold={flt_threshold}",
         "--zero_background"]
     
-    subprocess.run(cmd)
-    
+    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
     # Convert raster streams to vector
     wbt.verbose = False  # print tool messages
     wbt.raster_streams_to_vector(str_stream_raster_filepath,
@@ -990,8 +989,8 @@ def fn_prepare_input_layers_01(
         f"--width=20"           # Maximum road embankment width in map units
     ]
     
-    subprocess.run(cmd)
-    
+    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+
     # Step 5 -- Flow Accumulation (Pass 02)
     
     # --- Fill DEM depressions ---
@@ -1016,8 +1015,7 @@ def fn_prepare_input_layers_01(
         f"--threshold={flt_threshold}",
         "--zero_background"]
     
-    subprocess.run(cmd)
-    
+    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
     
     # Convert raster streams to vector
     wbt.verbose = False  # print tool messages
