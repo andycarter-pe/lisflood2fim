@@ -238,6 +238,7 @@ def fn_prep_next_par_file(next_row,
 # --------------------
 def fn_run_docker_lisflood(str_lisflood_folder, str_par_file_to_run):
     
+    '''
     str_docker_string = "lisflood-fp:augmented"
 
     cmd = [
@@ -245,6 +246,13 @@ def fn_run_docker_lisflood(str_lisflood_folder, str_par_file_to_run):
         "--rm",
         "-v", str_lisflood_folder + ":/data",
         "lisflood-fp:augmented",
+        "lisflood", str_par_file_to_run,
+    ]
+    '''
+    str_par_full_path = os.path.join(str_lisflood_folder, str_par_file_to_run)
+    #print(str_par_full_path)
+
+    cmd = [
         "lisflood", str_par_file_to_run,
     ]
 
@@ -503,11 +511,22 @@ def fn_run_lisflood_02(
     # ---------------
     # From local config
     str_catchment = dict_all_params['catchment']
-    str_out_root_folder = dict_all_params['out_root_folder']
+    #str_out_root_folder = dict_all_params['out_root_folder']
     
-    str_stream_folder = os.path.join(str_out_root_folder, str_catchment, "01_stream_delineation")
-    str_lisflood_folder = os.path.join(str_out_root_folder, str_catchment, "02_lisflood_input")
-    
+    # Make the root folder absolute
+    str_out_root_folder = os.path.abspath(dict_all_params['out_root_folder'])
+
+    # Then build downstream folders
+    str_stream_folder = os.path.abspath(os.path.join(str_out_root_folder, str_catchment, "01_stream_delineation"))
+    str_lisflood_folder = os.path.abspath(os.path.join(str_out_root_folder, str_catchment, "02_lisflood_input"))
+
+    #print(str_stream_folder)
+    #print(str_lisflood_folder)
+    str_original_cwd = os.getcwd()
+    os.chdir(str_lisflood_folder)
+    #print(os.getcwd())
+    #print('--------------')
+
     # create a list of all the parameter files
     list_par_files = fn_collect_par_values(str_lisflood_folder)
     
@@ -671,6 +690,8 @@ def fn_run_lisflood_02(
                         f"     -- {str_run_label} Run {next_row['parameter_file'][:-4]} "
                         f"completed in {round(flt_loop_time)} seconds"
                     )
+
+    os.chdir(str_original_cwd)
 # .........................................................
 
 
