@@ -9,6 +9,7 @@
 
 # ************************************************************
 import os
+
 import numpy as np
 import rasterio
 import geopandas as gpd
@@ -407,11 +408,20 @@ def fn_max_intensity_from_aoi_atlas_14(str_polygon_path,str_atlas_14_1000yr_5min
 
     # Load polygon (assumes one feature)
     gdf = gpd.read_file(str_polygon_path)
+
+    # If the CRS is missing, assign a default (usually EPSG:4326)
+    if gdf.crs is None:
+        gdf = gdf.set_crs("EPSG:4326")
+
     polygon = gdf.geometry.iloc[0]
     
     # Load raster using rioxarray (which extends xarray for spatial work)
     rds = rioxarray.open_rasterio(str_atlas_14_1000yr_5min, masked=True)
     
+    # If the raster CRS is missing, set it
+    if rds.rio.crs is None:
+        rds.rio.write_crs("EPSG:4326", inplace=True)
+
     # Ensure CRS matches
     if gdf.crs != rds.rio.crs:
         gdf = gdf.to_crs(rds.rio.crs)
@@ -434,11 +444,20 @@ def fn_min_intensity_from_aoi_atlas_14(str_polygon_path,str_atlas_14_1yr_24hr):
 
     # Load polygon (assumes one feature)
     gdf = gpd.read_file(str_polygon_path)
+
+    # If the CRS is missing, assign a default (usually EPSG:4326)
+    if gdf.crs is None:
+        gdf = gdf.set_crs("EPSG:4326")
+
     polygon = gdf.geometry.iloc[0]
     
     # Load raster using rioxarray (which extends xarray for spatial work)
     rds = rioxarray.open_rasterio(str_atlas_14_1yr_24hr, masked=True)
     
+    # If the raster CRS is missing, set it
+    if rds.rio.crs is None:
+        rds.rio.write_crs("EPSG:4326", inplace=True)
+
     # Ensure CRS matches
     if gdf.crs != rds.rio.crs:
         gdf = gdf.to_crs(rds.rio.crs)
@@ -789,53 +808,49 @@ def fn_prepare_input_layers_01(
 
     
     #print(dict_all_params)
-    
-    # ---------------
-    # From local config
-    str_out_root_folder = dict_all_params['out_root_folder']
+    # --------------- Make folders absolute
     str_catchment = dict_all_params['catchment']
-    
-    # Create main catchment folder
+    str_out_root_folder = os.path.abspath(dict_all_params['out_root_folder'])
     str_out_folder = os.path.join(str_out_root_folder, str_catchment)
     os.makedirs(str_out_folder, exist_ok=True)
-    
-    # Create subfolder for stream delineation
+
     str_out_folder_streams = os.path.join(str_out_folder, '01_stream_delineation')
     str_out_folder_streams_02 = os.path.join(str_out_folder, '02_lisflood_input')
     os.makedirs(str_out_folder_streams, exist_ok=True)
     os.makedirs(str_out_folder_streams_02, exist_ok=True)
-    
-    # --- output file names ---
-    str_dem_clipped_filepath = os.path.join(str_out_folder_streams, 'dem_clipped_5070.tif')
-    str_stream_raster_filepath = os.path.join(str_out_folder_streams, 'streams.tif')
-    str_stream_vector_filepath = os.path.join(str_out_folder_streams, 'streams.shp')
-    
-    str_dem_breach_filepath = os.path.join(str_out_folder_streams, 'dem_breach_5070.tif')
-    
-    str_stream_raster_filepath = os.path.join(str_out_folder_streams, 'streams.tif')
-    str_stream_vector_filepath = os.path.join(str_out_folder_streams, 'streams.shp')
-    str_dem_filled_filepath = os.path.join(str_out_folder_streams, 'dem_filled.tif')
-    str_dem_fdir_filepath = os.path.join(str_out_folder_streams, 'fdir.tif')
-    str_dem_fa_filepath = os.path.join(str_out_folder_streams, 'flow_accum.tif')
-    str_stream_points_filepath = os.path.join(str_out_folder_streams, 'stream_vertices_area.shp')
-    str_stream_points_acc_filepath = os.path.join(str_out_folder_streams, 'stream_vert_acc_pnt.shp')
-    str_polygon_filepath = os.path.join(str_out_folder_streams, 'watershed_ar_4326.geojson')
-    str_gpkg_filepath = os.path.join(str_out_folder_streams, str_catchment + '.gpkg')
-    
-    str_clipped_roads_filepath = os.path.join(str_out_folder_streams, 'clipped_roads_ln_5070.shp')
-    str_dem_burn_roads_filepath = os.path.join(str_out_folder_streams, 'dem_burn_roads_5070.tif')
-    
-    str_dem_asc_clipped_filepath = os.path.join(str_out_folder_streams, 'dem_clipped_5070.asc')
-    str_nc_pnt_rainfall_out = os.path.join(str_out_folder_streams, 'dem_clipped_5070.asc')
-    
-    str_dem_asc_clipped_filepath_02 = os.path.join(str_out_folder_streams_02, 'dem_clipped_5070.asc')
-    str_nc_pnt_rainfall_out_02 = os.path.join(str_out_folder_streams_02, 'dem_clipped_5070.asc')
-    # ---------------
+
+    # --- output file names (absolute)
+    str_dem_clipped_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'dem_clipped_5070.tif'))
+    str_dem_breach_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'dem_breach_5070.tif'))
+    str_dem_filled_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'dem_filled.tif'))
+    str_dem_fdir_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'fdir.tif'))
+    str_dem_fa_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'flow_accum.tif'))
+
+    str_stream_raster_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'streams.tif'))
+    str_stream_vector_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'streams.shp'))
+
+    str_stream_points_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'stream_vertices_area.shp'))
+    str_stream_points_acc_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'stream_vert_acc_pnt.shp'))
+
+    str_polygon_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'watershed_ar_4326.geojson'))
+    str_gpkg_filepath = os.path.abspath(os.path.join(str_out_folder_streams, str_catchment + '.gpkg'))
+
+    str_clipped_roads_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'clipped_roads_ln_5070.shp'))
+    str_dem_burn_roads_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'dem_burn_roads_5070.tif'))
+
+    str_dem_asc_clipped_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'dem_clipped_5070.asc'))
+    str_nc_pnt_rainfall_out = os.path.abspath(os.path.join(str_out_folder_streams, 'dem_clipped_5070.asc'))
+
+    str_dem_asc_clipped_filepath_02 = os.path.abspath(os.path.join(str_out_folder_streams_02, 'dem_clipped_5070.asc'))
+    str_nc_pnt_rainfall_out_02 = os.path.abspath(os.path.join(str_out_folder_streams_02, 'dem_clipped_5070.asc'))
+
     
     # other environment settings
     # TODO -- can probably eliminate once I am using the Docker Container
     #os.environ["PROJ_LIB"] = r"C:\Users\civil\anaconda3\envs\grib-env\Lib\site-packages\pyproj\proj_dir\share\proj"
-    str_whitebox_path = r"C:\Users\civil\anaconda3\envs\grib-env\Lib\site-packages\whitebox\whitebox_tools.exe"
+    #str_whitebox_path = r"C:\Users\civil\anaconda3\envs\grib-env\Lib\site-packages\whitebox\whitebox_tools.exe"
+    
+    os.environ["PROJ_LIB"] = "/opt/miniconda/envs/geo/share/proj"
     str_whitebox_path = "/opt/whitebox_tools/whitebox_tools"
     
     # --- Load polygon ---
@@ -929,7 +944,7 @@ def fn_prepare_input_layers_01(
     # Step 2 -- Flow Accumulation (Pass 01)
     # --- Fill DEM depressions ---
     wbt.fill_depressions(str_dem_breach_filepath, str_dem_filled_filepath)
-    
+    print(f" ------ {str_dem_filled_filepath}")
     # --- Flow direction ---
     wbt.d8_pointer(str_dem_filled_filepath, str_dem_fdir_filepath)
     
@@ -938,7 +953,7 @@ def fn_prepare_input_layers_01(
     
     # Step 3 -- Stream Network (Pass 01)
     # --- Extract stream locations
-    '''
+    
     cmd = [
         str_whitebox_path,
         "--run=ExtractStreams",
@@ -949,18 +964,7 @@ def fn_prepare_input_layers_01(
         "--zero_background"]
     
     subprocess.run(cmd)
-    '''
-    # Step 3 -- Stream Network (Pass 01)
-    # --- Extract stream locations (API version)
     
-    wbt.extract_streams(
-        flow_accum=str_dem_fa_filepath,
-        d8_pntr=str_dem_fdir_filepath,
-        output=str_stream_raster_filepath,
-        threshold=flt_threshold,
-        zero_background=True
-    )
-
     # Convert raster streams to vector
     wbt.verbose = False  # print tool messages
     wbt.raster_streams_to_vector(str_stream_raster_filepath,
@@ -975,7 +979,7 @@ def fn_prepare_input_layers_01(
     # Save as Shapefile
     gdf_roads_clipped_5070.to_file(str_clipped_roads_filepath, driver="ESRI Shapefile")
     
-    '''
+    
     cmd = [
         str_whitebox_path,
         "--run=BurnStreamsAtRoads",
@@ -987,16 +991,7 @@ def fn_prepare_input_layers_01(
     ]
     
     subprocess.run(cmd)
-    '''
     
-    wbt.burn_streams_at_roads(
-        dem=str_dem_breach_filepath,
-        streams=str_stream_vector_filepath,
-        roads=str_clipped_roads_filepath,
-        output=str_dem_burn_roads_filepath,
-        width=20.0
-    )
-
     # Step 5 -- Flow Accumulation (Pass 02)
     
     # --- Fill DEM depressions ---
@@ -1011,7 +1006,7 @@ def fn_prepare_input_layers_01(
     
     # Step 6 -- Stream Network (Pass 02)
     # --- Extract stream locations
-    '''
+    
     cmd = [
         str_whitebox_path,
         "--run=ExtractStreams",
@@ -1022,15 +1017,7 @@ def fn_prepare_input_layers_01(
         "--zero_background"]
     
     subprocess.run(cmd)
-    '''
     
-    wbt.extract_streams(
-        flow_accum=str_dem_fa_filepath,
-        d8_pntr=str_dem_fdir_filepath,
-        output=str_stream_raster_filepath,
-        threshold=flt_threshold,
-        zero_background=True
-    )
     
     # Convert raster streams to vector
     wbt.verbose = False  # print tool messages
