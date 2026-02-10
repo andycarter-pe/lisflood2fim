@@ -9,7 +9,7 @@
 #   - LISFLOOD-FP compiled with OpenMP, NetCDF, and NUMA support
 #   - LISFLOOD-FP executable in /usr/local/bin as 'lisflood' and symlink 'lisflood_fp'
 #   - WhiteboxTools installed as 'whitebox_tools' and symlink 'wbt'
-#   - Default working directory: /app
+#   - Default working directory: /data
 ################################################################################
 
 # Base image
@@ -39,6 +39,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     gdal-bin \
 	netcdf-bin \
+	nano \
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -113,17 +114,17 @@ RUN conda create -y -n geo python=3.11 \
 SHELL ["conda", "run", "-n", "geo", "/bin/bash", "-c"]
 
 # Install Python geospatial packages with pip inside 'geo' environment
-RUN pip install --no-cache-dir \
-    numpy \
-    pandas \
-    geopandas \
-    rasterio \
-    rioxarray \
-    shapely \
-    fiona \
-    pyogrio \
+RUN conda install -n geo -c conda-forge \
+    python=3.11 \
+    numpy pandas geopandas \
+    rasterio rioxarray \
+    shapely fiona pyogrio \
     netCDF4 \
-    whitebox
+    gdal proj proj-data pyproj \
+    && conda clean -afy
+	
+# Then you can still install whitebox via pip if you want
+RUN pip install --no-cache-dir whitebox
 
 # Verify installation
 RUN python -c "import numpy, pandas, geopandas, rasterio, rioxarray, shapely, fiona, pyogrio, netCDF4; import whitebox; print('Geo environment OK')"
@@ -132,15 +133,26 @@ RUN python -c "import numpy, pandas, geopandas, rasterio, rioxarray, shapely, fi
 RUN /opt/miniconda/bin/conda init bash
 
 # -------------------------------
-# Set default working directory for simulations
+# Revert to normal shell for system commands
 # -------------------------------
-WORKDIR /app
+SHELL ["/bin/bash", "-c"]
 
-# -------------------------------
+# Install git system-wide for cloning repositories
+RUN apt-get update && apt-get install -y git \
+    && rm -rf /var/lib/apt/lists/*
+
 # Clone the lisflood2fim repository
-# -------------------------------
 RUN git clone https://github.com/andycarter-pe/lisflood2fim.git /app/lisflood2fim
 
-# Default command
+# -------------------------------
+# Set default working directory for simulations
+# -------------------------------
+WORKDIR /app/lisflood2fim/src
 
+# -------------------------------
+# Switch back to Conda environment shell for Python commands
+# -------------------------------
+SHELL ["conda", "run", "-n", "geo", "/bin/bash", "-c"]
+
+# Default command
 CMD ["/bin/bash"]
