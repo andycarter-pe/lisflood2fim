@@ -833,9 +833,9 @@ def fn_prepare_input_layers_01(
     
     # other environment settings
     # TODO -- can probably eliminate once I am using the Docker Container
-    os.environ["PROJ_LIB"] = r"C:\Users\civil\anaconda3\envs\grib-env\Lib\site-packages\pyproj\proj_dir\share\proj"
+    #os.environ["PROJ_LIB"] = r"C:\Users\civil\anaconda3\envs\grib-env\Lib\site-packages\pyproj\proj_dir\share\proj"
     str_whitebox_path = r"C:\Users\civil\anaconda3\envs\grib-env\Lib\site-packages\whitebox\whitebox_tools.exe"
-    
+    str_whitebox_path = "/opt/whitebox_tools/whitebox_tools"
     
     # --- Load polygon ---
     str_url_divides = dict_all_params['url_divides']
@@ -937,6 +937,7 @@ def fn_prepare_input_layers_01(
     
     # Step 3 -- Stream Network (Pass 01)
     # --- Extract stream locations
+    '''
     cmd = [
         str_whitebox_path,
         "--run=ExtractStreams",
@@ -947,7 +948,18 @@ def fn_prepare_input_layers_01(
         "--zero_background"]
     
     subprocess.run(cmd)
+    '''
+    # Step 3 -- Stream Network (Pass 01)
+    # --- Extract stream locations (API version)
     
+    wbt.extract_streams(
+        flow_accum=str_dem_fa_filepath,
+        d8_pntr=str_dem_fdir_filepath,
+        output=str_stream_raster_filepath,
+        threshold=flt_threshold,
+        zero_background=True
+    )
+
     # Convert raster streams to vector
     wbt.verbose = False  # print tool messages
     wbt.raster_streams_to_vector(str_stream_raster_filepath,
@@ -962,6 +974,7 @@ def fn_prepare_input_layers_01(
     # Save as Shapefile
     gdf_roads_clipped_5070.to_file(str_clipped_roads_filepath, driver="ESRI Shapefile")
     
+    '''
     cmd = [
         str_whitebox_path,
         "--run=BurnStreamsAtRoads",
@@ -973,7 +986,16 @@ def fn_prepare_input_layers_01(
     ]
     
     subprocess.run(cmd)
+    '''
     
+    wbt.burn_streams_at_roads(
+        dem=str_dem_breach_filepath,
+        streams=str_stream_vector_filepath,
+        roads=str_clipped_roads_filepath,
+        output=str_dem_burn_roads_filepath,
+        width=20.0
+    )
+
     # Step 5 -- Flow Accumulation (Pass 02)
     
     # --- Fill DEM depressions ---
@@ -988,6 +1010,7 @@ def fn_prepare_input_layers_01(
     
     # Step 6 -- Stream Network (Pass 02)
     # --- Extract stream locations
+    '''
     cmd = [
         str_whitebox_path,
         "--run=ExtractStreams",
@@ -998,6 +1021,15 @@ def fn_prepare_input_layers_01(
         "--zero_background"]
     
     subprocess.run(cmd)
+    '''
+    
+    wbt.extract_streams(
+        flow_accum=str_dem_fa_filepath,
+        d8_pntr=str_dem_fdir_filepath,
+        output=str_stream_raster_filepath,
+        threshold=flt_threshold,
+        zero_background=True
+    )
     
     # Convert raster streams to vector
     wbt.verbose = False  # print tool messages
@@ -1297,7 +1329,7 @@ if __name__ == '__main__':
     
     parser.add_argument('-c',
                         dest = "str_local_config_file_path",
-                        help=r'REQUIRED: Global configuration filepath Example:C:\Users\civil\dev\lisflood2fim\config\local_config.ini',
+                        help=r'REQUIRED: LOCAL configuration filepath Example:C:\Users\civil\dev\lisflood2fim\config\local_config.ini',
                         required=True,
                         metavar='FILE',
                         type=lambda x: is_valid_file(parser, x))
