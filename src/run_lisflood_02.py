@@ -193,7 +193,8 @@ def fn_prep_next_par_file(next_row,
                           b_use_startfile):
 
     if next_row is None:
-        print("No higher intensity available")
+        #print("No higher intensity available")
+        pass
     else:
         #print(f"Next intensity: {next_row['intensity']}")
 
@@ -387,7 +388,7 @@ def fn_prep_next_paramter_file(row,
 
         return(os.path.basename(str_parameter_to_ammend_filepath))
     else:
-        print("No higher intensity available")
+        #print("No higher intensity available")
         return None
 # --------------------------
 
@@ -439,7 +440,7 @@ def fn_run_lisflood_02(
 ===================================================================
 """)
     else:
-        print("Script 02: Run LISFLOOD-FP")
+        print(" -- Script 02: Run LISFLOOD-FP")
 
     # ==================================================================
     # READ GLOBAL CONFIG
@@ -547,7 +548,8 @@ def fn_run_lisflood_02(
     
     if b_run_first_run:
         # --- First Run --- This is the lowest rainfall
-        print('  -- STEP 1: Running LISFLOOD')
+        if b_print_output:
+            print('  -- STEP 1: Running LISFLOOD')
         
         # Run the first model to the full time duration
         str_par_file_to_run = os.path.basename(df_parameter_files.iloc[0]['filepath'])

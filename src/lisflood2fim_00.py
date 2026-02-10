@@ -54,19 +54,26 @@ def fn_lisflood2fim_00(str_global_config_file_path,
     # ---- Header output ----
     if b_print_output:
         print(f"""
-    +=================================================================+
-    |                       RUNNING LISFLOOD2FIM                      |
-    |                Created by Andy Carter, PE of                    |
-    |             Center for Water and the Environment                |
-    |                 University of Texas at Austin                   |
-    +-----------------------------------------------------------------+
-      ---(g) INPUT GLOBAL CONFIGURATION FILE: {str_global_config_file_path}
-      ---(c) LOCAL CONFIGURATION FILE:  {str_local_config_file_path}
-      ---[r] PRINT OUTPUT: {b_print_output}
-    ===================================================================
+ +=================================================================+
+ |                       RUNNING LISFLOOD2FIM                      |
+ |                Created by Andy Carter, PE of                    |
+ |             Center for Water and the Environment                |
+ |                 University of Texas at Austin                   |
+ +-----------------------------------------------------------------+
+   ---(g) INPUT GLOBAL CONFIGURATION FILE: {str_global_config_file_path}
+   ---(c) LOCAL CONFIGURATION FILE:  {str_local_config_file_path}
+   ---[r] PRINT OUTPUT: {b_print_output}
+ ===================================================================
     """)
     else:
-        print("Script 00: Running LISFLOOD2FIM")
+        print("""
+ +=================================================================+
+ |                       RUNNING LISFLOOD2FIM                      |
+ |                Created by Andy Carter, PE of                    |
+ |             Center for Water and the Environment                |
+ |                 University of Texas at Austin                   |
+ ===================================================================
+    """)
     
     fn_prepare_input_layers_01(str_global_config_file_path,
                                str_local_config_file_path,
@@ -88,12 +95,12 @@ if __name__ == '__main__':
 
     flt_start_run = time.time()
     
-    parser = argparse.ArgumentParser(description='========= BUILD FLOOD INUNDATION NETCDF =========')
+    parser = argparse.ArgumentParser(description='========= RUNNING LISFLOOD2FIM  =========')
     
     parser.add_argument('-g',
                         dest = "str_global_config_file_path",
                         help=r'REQUIRED: Global configuration filepath Example:/app/lisflood2fim/config/demo_global_config.ini',
-                        required=True,
+                        required=False,
                         default='/app/lisflood2fim/config/demo_global_config.ini',
                         metavar='FILE',
                         type=lambda x: is_valid_file(parser, x))
@@ -101,7 +108,7 @@ if __name__ == '__main__':
     parser.add_argument('-c',
                         dest = "str_local_config_file_path",
                         help=r'REQUIRED: LOCAL configuration filepath Example:/app/lisflood2fim/config/demo_local_config.ini',
-                        required=True,
+                        required=False,
                         default='/app/lisflood2fim/config/demo_local_config.ini',
                         metavar='FILE',
                         type=lambda x: is_valid_file(parser, x))
@@ -119,7 +126,7 @@ if __name__ == '__main__':
     str_local_config_file_path = args['str_local_config_file_path']
     b_print_output = args['b_print_output']
 
-    fn_build_netcdf_03(str_global_config_file_path, str_local_config_file_path, b_print_output)
+    fn_lisflood2fim_00(str_global_config_file_path, str_local_config_file_path, b_print_output)
 
     flt_end_run = time.time()
     flt_time_pass = (flt_end_run - flt_start_run) // 1

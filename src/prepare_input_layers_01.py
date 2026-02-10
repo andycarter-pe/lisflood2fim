@@ -730,7 +730,7 @@ def fn_prepare_input_layers_01(
 ===================================================================
 """)
     else:
-        print("Script 01: Prepare input layers for LISFLOOD-FP")
+        print(" -- Script 01: Prepare input layers for LISFLOOD-FP")
 
     # ==================================================================
     # READ GLOBAL CONFIG

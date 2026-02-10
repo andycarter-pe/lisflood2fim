@@ -154,7 +154,7 @@ def fn_build_netcdf_03(
 ===================================================================
 """)
     else:
-        print("Script 03: Build Flood Inundation NetCDF")
+        print(" -- Script 03: Build Flood Inundation NetCDF")
 
     # ==================================================================
     # READ GLOBAL CONFIG
@@ -209,7 +209,7 @@ def fn_build_netcdf_03(
         **dict_local_params
     }
     
-    print(dict_all_params)
+    #print(dict_all_params)
     
     if b_print_output:
         print('  -- STEP 1: Finding Depth Rasters')
@@ -376,7 +376,7 @@ if __name__ == '__main__':
     
     parser.add_argument('-c',
                         dest = "str_local_config_file_path",
-                        help=r'REQUIRED: Global configuration filepath Example:C:\Users\civil\dev\lisflood2fim\config\local_config.ini',
+                        help=r'REQUIRED: LOCAL configuration filepath Example:C:\Users\civil\dev\lisflood2fim\config\local_config.ini',
                         required=True,
                         metavar='FILE',
                         type=lambda x: is_valid_file(parser, x))
