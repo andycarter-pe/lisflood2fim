@@ -27,8 +27,10 @@ For convience, a container has been pre-built and pushed to DockerHub.  To pull 
 ```
 docker pull civileng127/lisflood2fim:20260209
 ```
-Run the containers demo
+Run the containers demo: Note '/mnt/e/lisflood_dump' is the local directory where output will be saved
 ```
-docker run -it civileng127/lisflood2fim:20260209 \
-bash -c "source /opt/miniconda/etc/profile.d/conda.sh && conda activate geo && cd /app/lisflood2fim/src && python lisflood2fim_00.py"
+docker run -it \
+-v /mnt/e/lisflood_dump:/mnt \
+civileng127/lisflood2fim:20260209 \
+bash -c "source /opt/miniconda/etc/profile.d/conda.sh && conda activate geo && cd /mnt && python /app/lisflood2fim/src/lisflood2fim_00.py"
 ```
