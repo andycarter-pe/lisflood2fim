@@ -27,7 +27,8 @@ For convience, a container has been pre-built and pushed to DockerHub.  To pull 
 ```
 docker pull civileng127/lisflood2fim:20260209
 ```
-To run this container, use the following command
+Run the containers demo
 ```
-docker run -e AWS_ACCESS_KEY_ID=<your_access_key> -e AWS_SECRET_ACCESS_KEY=<your_secret_access-key> -p 5000:5000 civileng127/tx-bridge-xs:20240223
+docker run -it civileng127/lisflood2fim:20260209 \
+bash -c "source /opt/miniconda/etc/profile.d/conda.sh && conda activate geo && cd /app/lisflood2fim/src && python lisflood2fim_00.py"
 ```
