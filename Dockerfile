@@ -126,6 +126,9 @@ RUN conda install -n geo -c conda-forge \
 # Then you can still install whitebox via pip if you want
 RUN pip install --no-cache-dir whitebox
 
+# Trigger WhiteboxTools first-run initialization during build
+RUN python -c "import whitebox; whitebox.WhiteboxTools(); print('WhiteboxTools initialized')"
+
 # Verify installation
 RUN python -c "import numpy, pandas, geopandas, rasterio, rioxarray, shapely, fiona, pyogrio, netCDF4; import whitebox; print('Geo environment OK')"
 
