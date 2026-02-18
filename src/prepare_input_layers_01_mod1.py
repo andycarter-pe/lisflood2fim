@@ -184,9 +184,9 @@ def fn_get_divides_lateral_gdf(str_wb,
                                dict_all_params):
     
     
-    flt_perct_bottom_line = dict_all_params['perct_bottom_line']
-    flt_perct_top_line = dict_all_params['perct_top_line']
-    
+    flt_perct_bottom_line = float(dict_all_params['perct_bottom_line'])
+    flt_perct_top_line = float(dict_all_params['perct_top_line'])
+
     # --- Read only flowpaths within polygon bbox ---
     bbox = tuple(polygon.total_bounds)
     flowpaths = gpd.read_file(str_url_flowpaths, bbox=bbox)
@@ -1139,6 +1139,9 @@ def fn_prepare_input_layers_01(
                                                                   str_url_divides,
                                                                   str_url_flowpaths,
                                                                   dict_all_params)
+    
+    if gdf_lateral.crs is None:
+        gdf_lateral.set_crs("EPSG:5070", inplace=True)
     
     # --- Load raster DEM (created in EPSG:4326) ---
     str_dem_4326_filepath = fn_create_terrain_tif(
