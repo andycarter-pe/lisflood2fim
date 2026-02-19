@@ -52,7 +52,7 @@ def fn_run_with_spinner(func, *args, message="Running"):
 # -----------------
 def fn_get_expected_outflow (flt_intensity, str_stream_folder, str_catchment):
     str_gpkg_path = os.path.join(str_stream_folder, str_catchment + ".gpkg")
-    str_terrain_dem_path = os.path.join(str_stream_folder, "dem_clipped_5070.tif")
+    str_terrain_dem_path = os.path.join(str_stream_folder, "00_dem_clipped_5070.tif")
     
     # Read a specific layer (flow_points)
     gdf_flow_points = gpd.read_file(str_gpkg_path, layer="flow_points")
