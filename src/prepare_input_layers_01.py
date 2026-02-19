@@ -4,7 +4,7 @@
 #
 # Created by: Andy Carter, PE
 # Created - 2026.02.04
-# Revised - 2026.02.10
+# Revised - 2026.02.18 -- Revised for lateral waterhseds
 # ************************************************************
 
 # ************************************************************
@@ -15,6 +15,7 @@ import rasterio
 import geopandas as gpd
 import pandas as pd
 from shapely.geometry import Point, mapping, LineString, box
+from shapely.ops import linemerge
 
 import rioxarray
 from whitebox import WhiteboxTools
@@ -163,6 +164,119 @@ def fn_create_terrain_tif(str_catchment_id,
     return(output_file)
 # -----------------
 
+
+# ................
+# Function to get last point of a LineString or MultiLineString
+def fn_compute_last_point(geom):
+    if geom.geom_type == "LineString":
+        return Point(geom.coords[-1])
+    elif geom.geom_type == "MultiLineString":
+        return Point(list(geom.geoms[-1].coords)[-1])
+    return None
+# ................
+
+
+# ----------------------------
+def fn_get_divides_lateral_gdf(str_wb,
+                               polygon,
+                               str_url_divides,
+                               str_url_flowpaths,
+                               dict_all_params):
+    
+    
+    flt_perct_bottom_line = float(dict_all_params['perct_bottom_line'])
+    flt_perct_top_line = float(dict_all_params['perct_top_line'])
+
+    # --- Read only flowpaths within polygon bbox ---
+    bbox = tuple(polygon.total_bounds)
+    flowpaths = gpd.read_file(str_url_flowpaths, bbox=bbox)
+
+    # --- Select target line ---
+    target_line = flowpaths.loc[flowpaths["id"] == str_wb]
+
+    if target_line.empty:
+        raise ValueError(f"No line with id '{str_wb}' found.")
+
+    target_geom = target_line.geometry.iloc[0]
+
+    # Merge MultiLineString if needed
+    if target_geom.geom_type == "MultiLineString":
+        target_geom = linemerge(target_geom)
+
+    target_length = target_geom.length
+
+    candidates = flowpaths.copy()
+    candidates["last_point"] = candidates.geometry.apply(fn_compute_last_point)
+
+    # Filter lines whose last point intersects target
+    mask = candidates["last_point"].apply(lambda pt: pt.intersects(target_geom))
+    lines_touching_target = candidates.loc[mask].copy()
+
+    # Compute normalized measure
+    lines_touching_target["measure"] = (
+        lines_touching_target["last_point"]
+        .apply(lambda pt: target_geom.project(pt) / target_length)
+    )
+
+    # Drop temp column and sort
+    lines_touching_target = (
+        lines_touching_target
+        .drop(columns="last_point")
+        .sort_values("measure")
+        .reset_index(drop=True)
+    )
+
+    # --- Remove lateral inflow streams that are too close to beginning
+    # or ending of the main stream ---
+    lines_touching_target = (
+        lines_touching_target[
+            (lines_touching_target["measure"] >= flt_perct_bottom_line) &
+            (lines_touching_target["measure"] <= flt_perct_top_line)
+        ]
+        .reset_index(drop=True)
+    )
+
+    # --- List of lateral inflow streams
+    list_id_lateral = lines_touching_target["id"].tolist()
+
+    # --- Add the mainstream to the list
+    list_id_lateral.append(str_wb)
+    
+    int_catchment_count = len(list_id_lateral)
+
+    # --- convert 'wb-' to 'cat-'
+    list_id_lateral_cat = ["cat-" + item[3:] for item in list_id_lateral]
+
+    gdf_list = []
+
+    for divide_id in list_id_lateral_cat:
+        gdf = fn_get_divide_gdf(str_url_divides, divide_id)
+
+        if not gdf.empty:
+            gdf_list.append(gdf)
+
+    if not gdf_list:
+        raise ValueError("No polygons were returned.")
+
+    # --- Combine into single GeoDataFrame ---
+    combined = gpd.GeoDataFrame(
+        pd.concat(gdf_list, ignore_index=True),
+        crs=gdf_list[0].crs
+    )
+
+    # --- Merge into single polygon geometry ---
+    merged_polygon = unary_union(combined.geometry)
+
+    # Wrap back into GeoDataFrame
+    merged_gdf = gpd.GeoDataFrame(
+        geometry=[merged_polygon],
+        crs=combined.crs
+    )
+    
+    return(int_catchment_count, merged_gdf)
+# ----------------------------
+
+
 # ----------------
 def fn_get_clipped_roads(polygon, str_url_roads):
 
@@ -204,6 +318,17 @@ def fn_get_clipped_roads(polygon, str_url_roads):
 
     return(gdf_roads_clipped_5070)
 # ----------------
+
+# -----------
+def fn_two_digit_string(n: int) -> str:
+    return f"{n:02d}_"
+# -----------
+
+
+# -----------
+def fn_build_path(folder: str, prefix: str, name: str) -> str:
+    return os.path.abspath(os.path.join(folder, f"{prefix}{name}"))
+# -----------
 
 
 # ---------------
@@ -703,6 +828,116 @@ def fn_extract_run_name(filename):
 # ----------------
 
 
+# ...............................
+def fn_condition_terrain(dict_filepaths, 
+                         str_out_folder_streams,
+                         str_whitebox_path,
+                         flt_threshold,
+                         polygon,
+                         str_url_roads):
+
+    wbt = WhiteboxTools()
+    wbt.verbose = False  # print tool messages
+
+    # Now set the working directory
+    wbt.work_dir = str_out_folder_streams
+
+    # Step 1 -- Breach Depressions Least Cost
+    cmd = [
+        str_whitebox_path,
+        "--run=BreachDepressionsLeastCost",
+        f"--dem={dict_filepaths['dem_clipped']}",
+        f"-o={dict_filepaths['dem_breach']}",
+        f"--dist=2000",
+        f"--max_cost=500",
+        f"--flat_increment=0.001"]
+
+    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+
+    # Step 2 -- Flow Accumulation (Pass 01)
+    # --- Fill DEM depressions ---
+    wbt.fill_depressions(dict_filepaths['dem_breach'], dict_filepaths['dem_filled'])
+
+    # --- Flow direction ---
+    wbt.d8_pointer(dict_filepaths['dem_filled'], dict_filepaths['dem_fdir'])
+
+    # --- Flow accumulation (D8) ---
+    wbt.d8_flow_accumulation(dict_filepaths['dem_filled'], dict_filepaths['dem_fa'], out_type="cells")
+
+    # Step 3 -- Stream Network (Pass 01)
+    # --- Extract stream locations
+
+    cmd = [
+        str_whitebox_path,
+        "--run=ExtractStreams",
+        f"--flow_accum={dict_filepaths['dem_fa']}",
+        f"--d8_pntr={dict_filepaths['dem_fdir']}",
+        f"--output={dict_filepaths['stream_raster']}",
+        f"--threshold={flt_threshold}",
+        "--zero_background"]
+
+    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+    # Convert raster streams to vector
+    wbt.verbose = False  # print tool messages
+    wbt.raster_streams_to_vector(dict_filepaths['stream_raster'],
+                                 dict_filepaths['dem_fdir'],
+                                 dict_filepaths['stream_vector'])
+
+    # Step 4 -- Burn Streams at Road 
+
+    # note -- needs road vector extraction from fgb
+    gdf_roads_clipped_5070 = fn_get_clipped_roads(polygon, str_url_roads)
+
+    # Save as Shapefile
+    gdf_roads_clipped_5070.to_file(dict_filepaths['clipped_roads'], driver="ESRI Shapefile")
+
+
+    cmd = [
+        str_whitebox_path,
+        "--run=BurnStreamsAtRoads",
+        f"--dem={dict_filepaths['dem_breach']}",          # Input DEM (breached or preprocessed)
+        f"--streams={dict_filepaths['stream_vector']}",  # Vector streams (preliminary pass 1)
+        f"--roads={dict_filepaths['clipped_roads']}",      # Vector roads (centerlines)
+        f"--output={dict_filepaths['dem_burn_roads']}",    # Output DEM with burned culverts
+        f"--width=20"           # Maximum road embankment width in map units
+    ]
+
+    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+
+    # Step 5 -- Flow Accumulation (Pass 02)
+
+    # --- Fill DEM depressions ---
+    wbt.fill_depressions(dict_filepaths['dem_burn_roads'], dict_filepaths['dem_filled'])
+
+    # --- Flow direction ---
+    wbt.d8_pointer(dict_filepaths['dem_filled'], dict_filepaths['dem_fdir'])
+
+    # --- Flow accumulation (D8) ---
+    wbt.d8_flow_accumulation(dict_filepaths['dem_filled'], dict_filepaths['dem_fa'], out_type="cells")
+
+
+    # Step 6 -- Stream Network (Pass 02)
+    # --- Extract stream locations
+
+    cmd = [
+        str_whitebox_path,
+        "--run=ExtractStreams",
+        f"--flow_accum={dict_filepaths['dem_fa']}",
+        f"--d8_pntr={dict_filepaths['dem_filled']}",
+        f"--output={dict_filepaths['stream_raster']}",
+        f"--threshold={flt_threshold}",
+        "--zero_background"]
+
+    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+
+    # Convert raster streams to vector
+    wbt.verbose = False  # print tool messages
+    wbt.raster_streams_to_vector(dict_filepaths['stream_raster'],
+                                 dict_filepaths['dem_fdir'],
+                                 dict_filepaths['stream_vector'])
+# ...............................
+
+
 # .........................................................
 def fn_prepare_input_layers_01(
     str_global_config_file_path,
@@ -741,6 +976,7 @@ def fn_prepare_input_layers_01(
     global_section_schema = {
         'datasource': [
             'url_divides',
+            'url_flowpaths',
             'vrt_terrain',
             'url_roads',
             'atlas_14_1000yr_5min',
@@ -753,7 +989,10 @@ def fn_prepare_input_layers_01(
             'initial_tstep',
             'depththresh',
             'max_Froude',
-            'outflow_boundary_slope'
+            'outflow_boundary_slope',
+            'perct_bottom_line',
+            'perct_top_line',
+            'stream_threshold_sq_mi'
         ],
         'flow_parameters': [
             'num_steps',
@@ -810,6 +1049,8 @@ def fn_prepare_input_layers_01(
     #print(dict_all_params)
     # --------------- Make folders absolute
     str_catchment = dict_all_params['catchment']
+    str_wb = 'wb-' + str_catchment[4:]
+    
     str_out_root_folder = os.path.abspath(dict_all_params['out_root_folder'])
     str_out_folder = os.path.join(str_out_root_folder, str_catchment)
     os.makedirs(str_out_folder, exist_ok=True)
@@ -820,23 +1061,38 @@ def fn_prepare_input_layers_01(
     os.makedirs(str_out_folder_streams_02, exist_ok=True)
 
     # --- output file names (absolute)
-    str_dem_clipped_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'dem_clipped_5070.tif'))
-    str_dem_breach_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'dem_breach_5070.tif'))
-    str_dem_filled_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'dem_filled.tif'))
-    str_dem_fdir_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'fdir.tif'))
-    str_dem_fa_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'flow_accum.tif'))
-
-    str_stream_raster_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'streams.tif'))
-    str_stream_vector_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'streams.shp'))
-
-    str_stream_points_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'stream_vertices_area.shp'))
-    str_stream_points_acc_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'stream_vert_acc_pnt.shp'))
+    str_header = fn_two_digit_string(0)
+    
+    dict_files = {
+        "dem_clipped": "dem_clipped_5070.tif",
+        "dem_breach": "dem_breach_5070.tif",
+        "dem_filled": "dem_filled.tif",
+        "dem_fdir": "fdir.tif",
+        "dem_fa": "flow_accum.tif",
+        "stream_raster": "streams.tif",
+        "stream_vector": "streams.shp",
+        "stream_points": "stream_vertices_area.shp",
+        "stream_points_acc": "stream_vert_acc_pnt.shp",
+        "clipped_roads": "clipped_roads_ln_5070.shp",
+        "dem_burn_roads": "dem_burn_roads_5070.tif",
+    }
+    
+    dict_paths_base = {
+        key: fn_build_path(str_out_folder_streams, str_header, filename)
+        for key, filename in dict_files.items()
+    }
+    
+    str_header_lateral  = fn_two_digit_string(1)
+    
+    dict_paths_lateral = {
+        key: fn_build_path(str_out_folder_streams, str_header_lateral, filename)
+        for key, filename in dict_files.items()
+    }
+    
+    ##str_dem_clipped_lateral_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'dem_clipped_lateral_5070.tif'))
 
     str_polygon_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'watershed_ar_4326.geojson'))
     str_gpkg_filepath = os.path.abspath(os.path.join(str_out_folder_streams, str_catchment + '.gpkg'))
-
-    str_clipped_roads_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'clipped_roads_ln_5070.shp'))
-    str_dem_burn_roads_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'dem_burn_roads_5070.tif'))
 
     str_dem_asc_clipped_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'dem_clipped_5070.asc'))
     str_nc_pnt_rainfall_out = os.path.abspath(os.path.join(str_out_folder_streams, 'dem_clipped_5070.asc'))
@@ -855,30 +1111,47 @@ def fn_prepare_input_layers_01(
     
     # --- Load polygon ---
     str_url_divides = dict_all_params['url_divides']
+    str_url_flowpaths = dict_all_params['url_flowpaths']
     str_vrt_terrain = dict_all_params['vrt_terrain']
     str_url_roads = dict_all_params['url_roads']
     int_terrain_buffer_m = int(dict_all_params['terrain_buffer_m'])
     int_downscale = int(dict_all_params['downscale'])
     
     # -- ASSUMES BASE TERRAIN OF 3 meters --
-    flt_threshold = (28700 / (int_downscale * int_downscale)) # cell count to start streams
+    # *** Note:  Assuming each pixel is 3m x 3m -- HARDCODED
+    int_pixel_size = 3
+    
+    flt_stream_threshold_sq_mi = float(dict_all_params['stream_threshold_sq_mi'])
+    int_cell_to_start_stream = int(flt_stream_threshold_sq_mi * 2589988 / (int_pixel_size * int_pixel_size))
+    
+    # *** Number of cells (at downscaled resolution) where stream begins
+    flt_threshold = (int_cell_to_start_stream / (int_downscale * int_downscale)) # cell count to start streams
     
     if b_print_output:
         print('  -- STEP 1: Finding terrain')
     polygon = fn_get_divide_gdf(str_url_divides, str_catchment)
     if polygon.crs is None:
         polygon.set_crs("EPSG:5070", inplace=True)
-        
+    
+    # determine lateral watersheds
+    int_catchment_count, gdf_lateral = fn_get_divides_lateral_gdf(str_wb,
+                                                                  polygon,
+                                                                  str_url_divides,
+                                                                  str_url_flowpaths,
+                                                                  dict_all_params)
+    
+    if gdf_lateral.crs is None:
+        gdf_lateral.set_crs("EPSG:5070", inplace=True)
+    
     # --- Load raster DEM (created in EPSG:4326) ---
     str_dem_4326_filepath = fn_create_terrain_tif(
         str_catchment,
         str_out_folder_streams,
-        polygon,
+        gdf_lateral,
         str_vrt_terrain,
         int_terrain_buffer_m,
-        b_print_output
-    )
-    
+        b_print_output)
+        
     dem = rioxarray.open_rasterio(str_dem_4326_filepath, masked=True)
 
     # --- Reproject DEM to EPSG:5070 ---
@@ -896,18 +1169,26 @@ def fn_prepare_input_layers_01(
         resampling=resampling_method)
     
     # --- Ensure CRS match for clipping ---
-    if polygon.crs != dem_5070_downscaled.rio.crs:
-        polygon = polygon.to_crs(dem_5070_downscaled.rio.crs)
+    if gdf_lateral.crs != dem_5070_downscaled.rio.crs:
+        gdf_lateral = gdf_lateral.to_crs(dem_5070_downscaled.rio.crs)
         
     # --- Clip downscaled DEM ---
     dem_clipped_5070 = dem_5070_downscaled.rio.clip(
         polygon.geometry.apply(mapping),
         polygon.crs,
-        from_disk=True
-    )
+        from_disk=True)
     
     # --- Save clipped, downscaled DEM ---
-    dem_clipped_5070.rio.to_raster(str_dem_clipped_filepath)
+    dem_clipped_5070.rio.to_raster(dict_paths_base['dem_clipped'])
+    
+    # --- Clip downscaled lateral DEM ---
+    if int_catchment_count > 1:
+        dem_clipped_lateral_5070 = dem_5070_downscaled.rio.clip(
+            gdf_lateral.geometry.apply(mapping),
+            gdf_lateral.crs,
+            from_disk=True)
+    
+        dem_clipped_lateral_5070.rio.to_raster(dict_paths_lateral['dem_clipped'])
     
     # --- Save rectangular (bbox) downscaled DEM ---
     str_dem_bbox_filepath = os.path.join(
@@ -923,105 +1204,23 @@ def fn_prepare_input_layers_01(
     if b_print_output:
         print('  -- STEP 3: Stream Conditioning')
     
-    wbt = WhiteboxTools()
-    wbt.verbose = False  # print tool messages
+    # condition the base polygon (single catchment)
+    fn_condition_terrain(dict_paths_base, 
+                         str_out_folder_streams,
+                         str_whitebox_path,
+                         flt_threshold,
+                         polygon,
+                         str_url_roads)
+        
     
-    # Now set the working directory
-    wbt.work_dir = str_out_folder_streams
-    
-    # Step 1 -- Breach Depressions Least Cost
-    cmd = [
-        str_whitebox_path,
-        "--run=BreachDepressionsLeastCost",
-        f"--dem={str_dem_clipped_filepath}",
-        f"-o={str_dem_breach_filepath}",
-        f"--dist=2000",
-        f"--max_cost=500",
-        f"--flat_increment=0.001"]
-    
-    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
-    
-    # Step 2 -- Flow Accumulation (Pass 01)
-    # --- Fill DEM depressions ---
-    wbt.fill_depressions(str_dem_breach_filepath, str_dem_filled_filepath)
-
-    # --- Flow direction ---
-    wbt.d8_pointer(str_dem_filled_filepath, str_dem_fdir_filepath)
-    
-    # --- Flow accumulation (D8) ---
-    wbt.d8_flow_accumulation(str_dem_filled_filepath, str_dem_fa_filepath, out_type="cells")
-    
-    # Step 3 -- Stream Network (Pass 01)
-    # --- Extract stream locations
-    
-    cmd = [
-        str_whitebox_path,
-        "--run=ExtractStreams",
-        f"--flow_accum={str_dem_fa_filepath}",
-        f"--d8_pntr={str_dem_fdir_filepath}",
-        f"--output={str_stream_raster_filepath}",
-        f"--threshold={flt_threshold}",
-        "--zero_background"]
-    
-    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
-    # Convert raster streams to vector
-    wbt.verbose = False  # print tool messages
-    wbt.raster_streams_to_vector(str_stream_raster_filepath,
-                                 str_dem_fdir_filepath,
-                                 str_stream_vector_filepath)
-    
-    # Step 4 -- Burn Streams at Road 
-    
-    # note -- needs road vector extraction from fgb
-    gdf_roads_clipped_5070 = fn_get_clipped_roads(polygon, str_url_roads)
-    
-    # Save as Shapefile
-    gdf_roads_clipped_5070.to_file(str_clipped_roads_filepath, driver="ESRI Shapefile")
-    
-    
-    cmd = [
-        str_whitebox_path,
-        "--run=BurnStreamsAtRoads",
-        f"--dem={str_dem_breach_filepath}",          # Input DEM (breached or preprocessed)
-        f"--streams={str_stream_vector_filepath}",  # Vector streams (preliminary pass 1)
-        f"--roads={str_clipped_roads_filepath}",      # Vector roads (centerlines)
-        f"--output={str_dem_burn_roads_filepath}",    # Output DEM with burned culverts
-        f"--width=20"           # Maximum road embankment width in map units
-    ]
-    
-    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
-
-    # Step 5 -- Flow Accumulation (Pass 02)
-    
-    # --- Fill DEM depressions ---
-    wbt.fill_depressions(str_dem_burn_roads_filepath, str_dem_filled_filepath)
-    
-    # --- Flow direction ---
-    wbt.d8_pointer(str_dem_filled_filepath, str_dem_fdir_filepath)
-    
-    # --- Flow accumulation (D8) ---
-    wbt.d8_flow_accumulation(str_dem_filled_filepath, str_dem_fa_filepath, out_type="cells")
-    
-    
-    # Step 6 -- Stream Network (Pass 02)
-    # --- Extract stream locations
-    
-    cmd = [
-        str_whitebox_path,
-        "--run=ExtractStreams",
-        f"--flow_accum={str_dem_fa_filepath}",
-        f"--d8_pntr={str_dem_fdir_filepath}",
-        f"--output={str_stream_raster_filepath}",
-        f"--threshold={flt_threshold}",
-        "--zero_background"]
-    
-    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
-    
-    # Convert raster streams to vector
-    wbt.verbose = False  # print tool messages
-    wbt.raster_streams_to_vector(str_stream_raster_filepath,
-                                 str_dem_fdir_filepath,
-                                 str_stream_vector_filepath)
+    # condition the terrain with lateral watersheds
+    if int_catchment_count > 1:
+        fn_condition_terrain(dict_paths_lateral, 
+                             str_out_folder_streams,
+                             str_whitebox_path,
+                             flt_threshold,
+                             gdf_lateral,
+                             str_url_roads)
     
     # ..............
     if b_print_output:
@@ -1042,14 +1241,14 @@ def fn_prepare_input_layers_01(
     # and then subtract that lowest value from the other points creating a new coloumn value
     # of 'contib_area', including the lowest point.  The lowest point should be zero.
     
-    fn_append_headwater_streams(str_stream_vector_filepath)
+    fn_append_headwater_streams(dict_paths_base['stream_vector'])
     
     # --- Load streams ---
-    streams = gpd.read_file(str_stream_vector_filepath)
+    streams = gpd.read_file(dict_paths_base['stream_vector'])
     streams = streams.set_crs("EPSG:5070")
     
     # --- Load flow accumulation raster ---
-    fa = rioxarray.open_rasterio(str_dem_fa_filepath, masked=True)
+    fa = rioxarray.open_rasterio(dict_paths_base['dem_fa'], masked=True)
     
     # --- If raster is not EPSG:5070, reproject it ---
     if fa.rio.crs.to_string() != "EPSG:5070":
@@ -1084,7 +1283,7 @@ def fn_prepare_input_layers_01(
     points_gdf = gpd.GeoDataFrame(point_records, crs="EPSG:5070")
     
     # --- Save to shapefile ---
-    points_gdf.to_file(str_stream_points_filepath)
+    points_gdf.to_file(dict_paths_base['stream_points'])
     
     # left join stream points_gdf with stream on 'FID' to add "is_head" value to
     # every point on points_gdf
@@ -1101,7 +1300,7 @@ def fn_prepare_input_layers_01(
     points_gdf_contrib = (points_gdf.groupby("FID", group_keys=False).apply(fn_compute_contrib_area, include_groups=False))
 
     # --- Save to shapefile ---
-    points_gdf_contrib.to_file(str_stream_points_acc_filepath)
+    points_gdf_contrib.to_file(dict_paths_base['stream_points_acc'])
     
     # --- Identify duplicate geometries ---
     dup_mask = points_gdf_contrib.duplicated(subset="geometry", keep=False)
@@ -1124,7 +1323,7 @@ def fn_prepare_input_layers_01(
     if 'FID' in points_gdf_contrib.columns:
         points_gdf_contrib = points_gdf_contrib.drop(columns=['FID'])
     
-    points_gdf_contrib.to_file(str_stream_points_acc_filepath)
+    points_gdf_contrib.to_file(dict_paths_base['stream_points_acc'])
     
     polygon.to_file(str_polygon_filepath, driver="GeoJSON")
     
@@ -1142,8 +1341,8 @@ def fn_prepare_input_layers_01(
     # List of your vector layers and desired layer names
     vector_layers = [
         (str_polygon_filepath, "watershed"),
-        (str_stream_vector_filepath, "streams"),
-        (str_stream_points_acc_filepath, "flow_points")
+        (dict_paths_base['stream_vector'], "streams"),
+        (dict_paths_base['stream_points_acc'], "flow_points")
     ]
     
     # Loop through layers and write them to the same GPKG
@@ -1153,7 +1352,7 @@ def fn_prepare_input_layers_01(
             gdf['catchment']=str_catchment
             gdf['threshold']=flt_threshold
         if layer_name == "watershed":
-            gdf['terrain_clip']=str_dem_clipped_filepath
+            gdf['terrain_clip']=dict_paths_base['dem_clipped']
             gdf['terrain_source']=str_vrt_terrain
             gdf['hydrofabric_source']=str_url_divides
         gdf.to_file(str_gpkg_filepath, layer=layer_name, driver="GPKG")
@@ -1162,7 +1361,12 @@ def fn_prepare_input_layers_01(
     if b_print_output:
         print('  -- STEP 5: Outflow Boundary Slope')
     str_slope = dict_all_params['outflow_boundary_slope']
-    str_bci_path = fn_raster_edge_cells_to_bci(str_dem_clipped_filepath,str_slope)
+    
+    if int_catchment_count > 1:
+        # need to use entire terrain pluss lateral watersheds
+        str_bci_path = fn_raster_edge_cells_to_bci(dict_paths_lateral['dem_clipped'],str_slope)
+    else:
+        str_bci_path = fn_raster_edge_cells_to_bci(dict_paths_base['dem_clipped'],str_slope)
     
     src = Path(str_bci_path)
     dst = src.parents[1] / "02_lisflood_input" / src.name
@@ -1177,7 +1381,10 @@ def fn_prepare_input_layers_01(
     #str_dem_asc_clipped_filepath
     
     # Open with rioxarray
-    dem = rioxarray.open_rasterio(str_dem_burn_roads_filepath, masked=True)
+    if int_catchment_count > 1:
+        dem = rioxarray.open_rasterio(dict_paths_lateral['dem_burn_roads'], masked=True)
+    else:
+        dem = rioxarray.open_rasterio(dict_paths_base['dem_burn_roads'], masked=True)
     
     # If the raster has multiple bands, select first band
     if dem.rio.count > 1:
@@ -1208,7 +1415,7 @@ def fn_prepare_input_layers_01(
     flt_peak_rain_rate_mmhr = flt_peak_rainfall_inhr * 25.4
     flt_min_rain_rate_mmhr = flt_min_rainfall_inhr * 25.4
     
-    fa = rioxarray.open_rasterio(str_dem_fa_filepath, masked=True)
+    fa = rioxarray.open_rasterio(dict_paths_base['dem_fa'], masked=True)
     flt_pixel_area_base_terrain, flt_max_cell_value = fn_get_fa_stats(fa)
     
     flt_max_q_cfs = fn_q_from_intensity(flt_peak_rain_rate_mmhr, flt_max_cell_value, flt_pixel_area_base_terrain)
@@ -1308,15 +1515,17 @@ if __name__ == '__main__':
     
     parser.add_argument('-g',
                         dest = "str_global_config_file_path",
-                        help=r'REQUIRED: Global configuration filepath Example:C:\Users\civil\dev\lisflood2fim\config\global_config.ini',
-                        required=True,
+                        help=r'REQUIRED: Global configuration filepath Example:/app/lisflood2fim/config/demo_global_config.ini',
+                        required=False,
+                        default='/app/lisflood2fim/config/demo_global_config.ini',
                         metavar='FILE',
                         type=lambda x: is_valid_file(parser, x))
     
     parser.add_argument('-c',
                         dest = "str_local_config_file_path",
-                        help=r'REQUIRED: LOCAL configuration filepath Example:C:\Users\civil\dev\lisflood2fim\config\local_config.ini',
-                        required=True,
+                        help=r'REQUIRED: LOCAL configuration filepath Example:/app/lisflood2fim/config/demo_local_config.ini',
+                        required=False,
+                        default='/app/lisflood2fim/config/demo_local_config.ini',
                         metavar='FILE',
                         type=lambda x: is_valid_file(parser, x))
     
