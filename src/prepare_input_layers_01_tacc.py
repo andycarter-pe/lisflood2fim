@@ -897,6 +897,25 @@ def fn_condition_terrain(dict_filepaths,
         "--zero_background"
     ]
     subprocess.run(cmd, check=True)
+    
+    # --- enforce the raster as an integer ---
+    # Original ExtractStreams output (float)
+    stream_raster = dict_filepaths['stream_raster']
+    
+    # Temporary file for rounding
+    tmp_raster = stream_raster.replace(".tif", "_tmp.tif")
+    
+    # Round CLI
+    cmd_round = [
+        str_whitebox_path,
+        "--run=Round",
+        f"--input={stream_raster}",
+        f"--output={tmp_raster}"
+    ]
+    subprocess.run(cmd_round, check=True)
+    
+    # Replace original file
+    os.replace(tmp_raster, stream_raster)
 
     # Convert raster streams to vector
     cmd = [
@@ -947,6 +966,25 @@ def fn_condition_terrain(dict_filepaths,
         "--zero_background"
     ]
     subprocess.run(cmd, check=True)
+
+    # --- enforce the raster as an integer ---
+    # Original ExtractStreams output (float)
+    stream_raster = dict_filepaths['stream_raster']
+    
+    # Temporary file for rounding
+    tmp_raster = stream_raster.replace(".tif", "_tmp.tif")
+    
+    # Round CLI
+    cmd_round = [
+        str_whitebox_path,
+        "--run=Round",
+        f"--input={stream_raster}",
+        f"--output={tmp_raster}"
+    ]
+    subprocess.run(cmd_round, check=True)
+    
+    # Replace original file
+    os.replace(tmp_raster, stream_raster)
 
     cmd = [
         str_whitebox_path,
