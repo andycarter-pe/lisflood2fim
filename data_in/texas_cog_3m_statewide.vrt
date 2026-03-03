@@ -1,0 +1,1593 @@
+<VRTDataset rasterXSize="453600" rasterYSize="388800">
+  <SRS dataAxisToSRSAxisMapping="2,1">GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AXIS["Latitude",NORTH],AXIS["Longitude",EAST],AUTHORITY["EPSG","4326"]]</SRS>
+  <GeoTransform> -1.0700000000000000e+02,  3.0864197529999981e-05,  0.0000000000000000e+00,  3.7000000000000000e+01,  0.0000000000000000e+00, -3.0864197529999981e-05</GeoTransform>
+  <VRTRasterBand dataType="Float32" band="1">
+    <NoDataValue>-9999</NoDataValue>
+    <ColorInterp>Gray</ColorInterp>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n25w98_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="291600" yOff="356400" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n26w100_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="226800" yOff="324000" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n26w98_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="291600" yOff="324000" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n26w99_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="259200" yOff="324000" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n27w100_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="226800" yOff="291600" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n27w101_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="194400" yOff="291600" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n27w97_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="324000" yOff="291600" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n27w98_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="291600" yOff="291600" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n27w99_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="259200" yOff="291600" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n28w100_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="226800" yOff="259200" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n28w101_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="194400" yOff="259200" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n28w104_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="97200" yOff="259200" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n28w96_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="356400" yOff="259200" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n28w97_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="324000" yOff="259200" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n28w98_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="291600" yOff="259200" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n28w99_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="259200" yOff="259200" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w100_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="226800" yOff="226800" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w101_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="194400" yOff="226800" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w102_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="162000" yOff="226800" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w103_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="129600" yOff="226800" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w104_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="97200" yOff="226800" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w105_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="64800" yOff="226800" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w94_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="421200" yOff="226800" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w95_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="388800" yOff="226800" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w96_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="356400" yOff="226800" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w97_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="324000" yOff="226800" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w98_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="291600" yOff="226800" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w99_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="259200" yOff="226800" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w100_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="226800" yOff="194400" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w101_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="194400" yOff="194400" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w102_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="162000" yOff="194400" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w103_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="129600" yOff="194400" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w104_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="97200" yOff="194400" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w105_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="64800" yOff="194400" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w106_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="32400" yOff="194400" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w94_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="421200" yOff="194400" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w95_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="388800" yOff="194400" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w96_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="356400" yOff="194400" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w97_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="324000" yOff="194400" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w98_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="291600" yOff="194400" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w99_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="259200" yOff="194400" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w100_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="226800" yOff="162000" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w101_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="194400" yOff="162000" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w102_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="162000" yOff="162000" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w103_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="129600" yOff="162000" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w104_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="97200" yOff="162000" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w105_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="64800" yOff="162000" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w106_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="32400" yOff="162000" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w107_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="0" yOff="162000" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w94_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="421200" yOff="162000" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w95_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="388800" yOff="162000" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w96_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="356400" yOff="162000" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w97_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="324000" yOff="162000" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w98_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="291600" yOff="162000" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w99_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="259200" yOff="162000" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w100_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="226800" yOff="129600" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w101_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="194400" yOff="129600" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w102_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="162000" yOff="129600" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w103_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="129600" yOff="129600" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w104_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="97200" yOff="129600" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w105_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="64800" yOff="129600" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w106_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="32400" yOff="129600" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w107_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="0" yOff="129600" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w95_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="388800" yOff="129600" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w96_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="356400" yOff="129600" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w97_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="324000" yOff="129600" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w98_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="291600" yOff="129600" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w99_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="259200" yOff="129600" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n33w100_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="226800" yOff="97200" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n33w101_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="194400" yOff="97200" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n33w102_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="162000" yOff="97200" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n33w103_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="129600" yOff="97200" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n33w104_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="97200" yOff="97200" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n33w95_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="388800" yOff="97200" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n33w96_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="356400" yOff="97200" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n33w97_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="324000" yOff="97200" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n33w98_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="291600" yOff="97200" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n33w99_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="259200" yOff="97200" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n34w100_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="226800" yOff="64800" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n34w101_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="194400" yOff="64800" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n34w102_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="162000" yOff="64800" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n34w103_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="129600" yOff="64800" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n34w104_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="97200" yOff="64800" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n34w98_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="291600" yOff="64800" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n34w99_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="259200" yOff="64800" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n35w101_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="194400" yOff="32400" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n35w102_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="162000" yOff="32400" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n35w103_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="129600" yOff="32400" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n35w104_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="97200" yOff="32400" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n36w101_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="194400" yOff="0" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n36w102_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="162000" yOff="0" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n36w103_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="129600" yOff="0" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n36w104_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="97200" yOff="0" xSize="32400" ySize="32400" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+  </VRTRasterBand>
+  <VRTRasterBand dataType="Byte" band="2">
+    <ColorInterp>Alpha</ColorInterp>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n25w98_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="291600" yOff="356400" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n26w100_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="226800" yOff="324000" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n26w98_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="291600" yOff="324000" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n26w99_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="259200" yOff="324000" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n27w100_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="226800" yOff="291600" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n27w101_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="194400" yOff="291600" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n27w97_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="324000" yOff="291600" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n27w98_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="291600" yOff="291600" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n27w99_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="259200" yOff="291600" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n28w100_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="226800" yOff="259200" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n28w101_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="194400" yOff="259200" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n28w104_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="97200" yOff="259200" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n28w96_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="356400" yOff="259200" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n28w97_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="324000" yOff="259200" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n28w98_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="291600" yOff="259200" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n28w99_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="259200" yOff="259200" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w100_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="226800" yOff="226800" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w101_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="194400" yOff="226800" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w102_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="162000" yOff="226800" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w103_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="129600" yOff="226800" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w104_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="97200" yOff="226800" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w105_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="64800" yOff="226800" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w94_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="421200" yOff="226800" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w95_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="388800" yOff="226800" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w96_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="356400" yOff="226800" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w97_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="324000" yOff="226800" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w98_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="291600" yOff="226800" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n29w99_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="259200" yOff="226800" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w100_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="226800" yOff="194400" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w101_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="194400" yOff="194400" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w102_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="162000" yOff="194400" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w103_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="129600" yOff="194400" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w104_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="97200" yOff="194400" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w105_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="64800" yOff="194400" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w106_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="32400" yOff="194400" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w94_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="421200" yOff="194400" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w95_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="388800" yOff="194400" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w96_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="356400" yOff="194400" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w97_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="324000" yOff="194400" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w98_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="291600" yOff="194400" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n30w99_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="259200" yOff="194400" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w100_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="226800" yOff="162000" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w101_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="194400" yOff="162000" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w102_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="162000" yOff="162000" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w103_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="129600" yOff="162000" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w104_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="97200" yOff="162000" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w105_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="64800" yOff="162000" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w106_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="32400" yOff="162000" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w107_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="0" yOff="162000" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w94_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="421200" yOff="162000" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w95_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="388800" yOff="162000" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w96_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="356400" yOff="162000" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w97_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="324000" yOff="162000" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w98_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="291600" yOff="162000" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n31w99_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="259200" yOff="162000" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w100_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="226800" yOff="129600" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w101_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="194400" yOff="129600" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w102_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="162000" yOff="129600" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w103_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="129600" yOff="129600" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w104_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="97200" yOff="129600" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w105_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="64800" yOff="129600" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w106_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="32400" yOff="129600" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w107_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="0" yOff="129600" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w95_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="388800" yOff="129600" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w96_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="356400" yOff="129600" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w97_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="324000" yOff="129600" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w98_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="291600" yOff="129600" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n32w99_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="259200" yOff="129600" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n33w100_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="226800" yOff="97200" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n33w101_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="194400" yOff="97200" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n33w102_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="162000" yOff="97200" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n33w103_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="129600" yOff="97200" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n33w104_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="97200" yOff="97200" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n33w95_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="388800" yOff="97200" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n33w96_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="356400" yOff="97200" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n33w97_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="324000" yOff="97200" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n33w98_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="291600" yOff="97200" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n33w99_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="259200" yOff="97200" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n34w100_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="226800" yOff="64800" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n34w101_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="194400" yOff="64800" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n34w102_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="162000" yOff="64800" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n34w103_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="129600" yOff="64800" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n34w104_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="97200" yOff="64800" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n34w98_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="291600" yOff="64800" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n34w99_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="259200" yOff="64800" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n35w101_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="194400" yOff="32400" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n35w102_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="162000" yOff="32400" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n35w103_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="129600" yOff="32400" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n35w104_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="97200" yOff="32400" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n36w101_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="194400" yOff="0" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n36w102_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="162000" yOff="0" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n36w103_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="129600" yOff="0" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/cog_tiles/n36w104_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="32400" RasterYSize="32400" DataType="Float32" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="32400" ySize="32400" />
+      <DstRect xOff="97200" yOff="0" xSize="32400" ySize="32400" />
+      <ScaleOffset>255</ScaleOffset>
+      <ScaleRatio>0</ScaleRatio>
+    </ComplexSource>
+  </VRTRasterBand>
+  <OverviewList resampling="nearest">2 4 8 16 32 64</OverviewList>
+</VRTDataset>

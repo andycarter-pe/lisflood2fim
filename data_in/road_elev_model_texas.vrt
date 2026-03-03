@@ -1,0 +1,208 @@
+<VRTDataset rasterXSize="312686" rasterYSize="298188">
+  <SRS dataAxisToSRSAxisMapping="1,2">PROJCS["WGS 84 / Pseudo-Mercator",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]],PROJECTION["Mercator_1SP"],PARAMETER["central_meridian",0],PARAMETER["scale_factor",1],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],EXTENSION["PROJ4","+proj=merc +a=6378137 +b=6378137 +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 +units=m +nadgrids=@null +wktext +no_defs"],AUTHORITY["EPSG","3857"]]</SRS>
+  <GeoTransform> -1.1872810729479857e+07,  4.6817679824670435e+00,  0.0000000000000000e+00,  4.3746440028172079e+06,  0.0000000000000000e+00, -4.6817679824670435e+00</GeoTransform>
+  <VRTRasterBand dataType="Float32" band="1">
+    <NoDataValue>-9999</NoDataValue>
+    <ColorInterp>Gray</ColorInterp>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/10_TYL_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="47104" RasterYSize="44544" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="47104" ySize="44544" />
+      <DstRect xOff="243461.224489796" yOff="101616.326530612" xSize="48065.306122449" ySize="45453.0612244898" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/11_LFK_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="52480" RasterYSize="49152" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="52480" ySize="49152" />
+      <DstRect xOff="257828.571428571" yOff="129044.897959184" xSize="53551.0204081633" ySize="50155.1020408163" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/12_HOU_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="45056" RasterYSize="49664" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="45056" ySize="49664" />
+      <DstRect xOff="247640.816326531" yOff="168489.795918367" xSize="45975.5102040817" ySize="50677.5510204082" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/13_YKM_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="55552" RasterYSize="56576" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="55552" ySize="56576" />
+      <DstRect xOff="208457.142857143" yOff="180767.346938776" xSize="56685.7142857143" ySize="57730.612244898" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/14_AUS_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="66560" RasterYSize="38912" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="66560" ySize="38912" />
+      <DstRect xOff="170318.367346939" yOff="156995.918367347" xSize="67918.3673469388" ySize="39706.1224489796" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/15_SAT_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="58368" RasterYSize="60416" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="58368" ySize="60416" />
+      <DstRect xOff="155428.571428571" yOff="177893.877551021" xSize="59559.1836734694" ySize="61648.9795918368" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/16_CRP_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="37376" RasterYSize="53760" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="37376" ySize="53760" />
+      <DstRect xOff="197224.489795918" yOff="207151.020408163" xSize="38138.7755102041" ySize="54857.1428571429" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/17_BRY_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="48128" RasterYSize="55040" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="48128" ySize="55040" />
+      <DstRect xOff="221518.367346939" yOff="129828.571428572" xSize="49110.2040816327" ySize="56163.2653061225" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/18_DAL_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="33536" RasterYSize="45568" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="33536" ySize="45568" />
+      <DstRect xOff="219167.346938775" yOff="90122.448979592" xSize="34220.4081632653" ySize="46497.9591836735" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/19_ATL_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="29952" RasterYSize="49152" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="29952" ySize="49152" />
+      <DstRect xOff="272195.918367347" yOff="82024.4897959185" xSize="30563.2653061225" ySize="50155.1020408163" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/1_PAR_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="52992" RasterYSize="36352" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="52992" ySize="36352" />
+      <DstRect xOff="229877.551020408" yOff="74187.7551020408" xSize="54073.4693877551" ySize="37093.8775510204" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/20_BMT_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="39680" RasterYSize="48384" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="39680" ySize="48384" />
+      <DstRect xOff="272195.918367347" yOff="151248.979591837" xSize="40489.7959183674" ySize="49371.4285714286" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/21_PHR_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="109568" RasterYSize="79872" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="109568" ySize="79872" />
+      <DstRect xOff="171102.040816327" yOff="257436.734693878" xSize="55902.0408163266" ySize="40751.0204081633" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/22_LRD_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="83968" RasterYSize="81408" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="83968" ySize="81408" />
+      <DstRect xOff="115983.673469388" yOff="177632.653061225" xSize="85681.6326530613" ySize="83069.3877551021" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/23_BWD_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="43264" RasterYSize="56576" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="43264" ySize="56576" />
+      <DstRect xOff="164832.653061225" yOff="103444.897959184" xSize="44146.9387755102" ySize="57730.612244898" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/24_ELP_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="92160" RasterYSize="86528" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="92160" ySize="86528" />
+      <DstRect xOff="0" yOff="126432.653061225" xSize="94040.8163265307" ySize="88293.8775510204" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/25_CHS_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="47616" RasterYSize="63232" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="47616" ySize="63232" />
+      <DstRect xOff="122514.285714286" yOff="26906.1224489799" xSize="48587.7551020408" ySize="64522.4489795919" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/2_FTW_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="36864" RasterYSize="43776" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="36864" ySize="43776" />
+      <DstRect xOff="191738.775510204" yOff="88816.3265306122" xSize="37616.3265306123" ySize="44669.3877551021" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/3_WFS_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="60160" RasterYSize="42496" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="60160" ySize="42496" />
+      <DstRect xOff="170318.367346939" yOff="61387.755102041" xSize="61387.7551020408" ySize="43363.2653061225" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/4_AMA_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="71936" RasterYSize="52224" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="71936" ySize="52224" />
+      <DstRect xOff="84897.9591836734" yOff="0" xSize="73404.0816326531" ySize="53289.7959183674" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/5_LBB_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="49408" RasterYSize="64000" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="49408" ySize="64000" />
+      <DstRect xOff="83591.836734694" yOff="51461.2244897959" xSize="50416.3265306123" ySize="65306.1224489796" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/6_ODA_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="58624" RasterYSize="76800" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="58624" ySize="76800" />
+      <DstRect xOff="59559.1836734694" yOff="115200" xSize="59820.4081632653" ySize="78367.3469387755" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/7_SJT_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="72448" RasterYSize="68096" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="72448" ySize="68096" />
+      <DstRect xOff="101355.102040816" yOff="127738.775510204" xSize="73926.5306122449" ySize="69485.7142857143" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/8_ABL_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="61440" RasterYSize="37120" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="61440" ySize="37120" />
+      <DstRect xOff="117289.795918367" yOff="90906.1224489799" xSize="62693.8775510204" ySize="37877.5510204082" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/vsicurl/https://web.corral.tacc.utexas.edu/ras2fim/road_elev_tiles/9_WAC_dsm_cog.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="53248" RasterYSize="42752" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="53248" ySize="42752" />
+      <DstRect xOff="194351.020408163" yOff="122514.285714286" xSize="54334.693877551" ySize="43624.4897959184" />
+      <NODATA>-9999</NODATA>
+    </ComplexSource>
+  </VRTRasterBand>
+</VRTDataset>
