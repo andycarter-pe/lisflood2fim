@@ -5,6 +5,7 @@
 # Created by: Andy Carter, PE
 # Created - 2026.02.04
 # Revised - 2026.02.18 -- Revised for lateral waterhseds
+# Revised - 2026.02.18 -- Line 824 -- Whitebox $HOME bypass
 # ************************************************************
 
 # ************************************************************
@@ -837,6 +838,9 @@ def fn_condition_terrain(dict_filepaths,
                          str_url_roads):
 
     wbt = WhiteboxTools()
+    
+    # This bypasses $HOME detection eon HPC -- 2026.03.04
+    wbt.set_whitebox_dir("/opt/whitebox_tools")
     wbt.verbose = False  # print tool messages
 
     # Now set the working directory
