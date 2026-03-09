@@ -4,6 +4,7 @@
 #
 # Created by: Andy Carter, PE
 # Created - 2026.02.07
+# Revised - 2026.03.09 -- Creating output csv of run status
 # ************************************************************
 
 # ************************************************************
@@ -418,15 +419,16 @@ def fn_str_to_bool(value):
 
 
 # .........................................................
+
 def fn_run_lisflood_02(
-    str_global_config_file_path,
-    str_local_config_file_path,
-    b_print_output
-):
+        str_global_config_file_path,
+        str_local_config_file_path,
+        b_print_output):
 
-    #warnings.filterwarnings("ignore", category=UserWarning)
+    # ==========================================================
+    # Header
+    # ==========================================================
 
-    # ---- Header output ----
     if b_print_output:
         print(f"""
 +=================================================================+
@@ -443,9 +445,10 @@ def fn_run_lisflood_02(
     else:
         print(" -- Script 02: Run LISFLOOD-FP")
 
-    # ==================================================================
+    # ==========================================================
     # READ GLOBAL CONFIG
-    # ==================================================================
+    # ==========================================================
+
     global_config = configparser.ConfigParser()
     global_config.read(str_global_config_file_path)
 
@@ -465,14 +468,16 @@ def fn_run_lisflood_02(
             raise KeyError(f"Missing [{section_name}] section in GLOBAL config")
 
         section = global_config[section_name]
+
         dict_global_params.update({
             key: section.get(key, '')
             for key in keys
         })
 
-    # ==================================================================
+    # ==========================================================
     # READ LOCAL CONFIG
-    # ==================================================================
+    # ==========================================================
+
     local_config = configparser.ConfigParser()
     local_config.read(str_local_config_file_path)
 
@@ -486,10 +491,12 @@ def fn_run_lisflood_02(
     dict_local_params = {}
 
     for section_name, keys in local_section_schema.items():
+
         if section_name not in local_config:
             raise KeyError(f"Missing [{section_name}] section in LOCAL config")
 
         section = local_config[section_name]
+
         dict_local_params.update({
             key: section.get(key, '')
             for key in keys
@@ -501,200 +508,238 @@ def fn_run_lisflood_02(
         **dict_local_params
     }
 
-
-    # *************
-    # For testing and recomputing
-    b_run_first_run = True
-    int_process_row_index = 0
-    # *************
+    # ==========================================================
+    # Paths
+    # ==========================================================
     
-    #print(dict_all_params)
-    
-    # ---------------
     # From local config
     str_catchment = dict_all_params['catchment']
-    #str_out_root_folder = dict_all_params['out_root_folder']
     
     # Make the root folder absolute
     str_out_root_folder = os.path.abspath(dict_all_params['out_root_folder'])
 
     # Then build downstream folders
-    str_stream_folder = os.path.abspath(os.path.join(str_out_root_folder, str_catchment, "01_stream_delineation"))
-    str_lisflood_folder = os.path.abspath(os.path.join(str_out_root_folder, str_catchment, "02_lisflood_input"))
+    str_stream_folder = os.path.abspath(
+        os.path.join(str_out_root_folder, str_catchment, "01_stream_delineation")
+    )
 
-    #print(str_stream_folder)
-    #print(str_lisflood_folder)
+    str_lisflood_folder = os.path.abspath(
+        os.path.join(str_out_root_folder, str_catchment, "02_lisflood_input")
+    )
+
     str_original_cwd = os.getcwd()
     os.chdir(str_lisflood_folder)
-    #print(os.getcwd())
-    #print('--------------')
 
+    # ==========================================================
+    # Collect parameter files
+    # ==========================================================
+    
     # create a list of all the parameter files
     list_par_files = fn_collect_par_values(str_lisflood_folder)
-    
+
     # convert list of parameter files to a dataframe and sort
     df_parameter_files = pd.DataFrame(
         list_par_files,
         columns=["filepath", "intensity"]
-    ).sort_values(by="intensity", ascending=True).reset_index(drop=True)
-    
+    ).sort_values(
+        by="intensity"
+    ).reset_index(drop=True)
+
     # intetensity_str as col like '115p6'
     df_parameter_files['intensity_str'] = (
         df_parameter_files['filepath']
         .apply(lambda p: os.path.basename(p).split('_')[-1].replace('mm.par', ''))
     )
-    
-    str_num_runs = str(len(df_parameter_files))
-    str_run_label = f"1 of {str_num_runs}: "
-    
-    if b_run_first_run:
-        # --- First Run --- This is the lowest rainfall
-        if b_print_output:
-            print('  -- STEP 1: Running LISFLOOD')
-        
-        # Run the first model to the full time duration
-        str_par_file_to_run = os.path.basename(df_parameter_files.iloc[0]['filepath'])
 
-        flt_loop_time = fn_run_with_spinner(
-            fn_run_docker_lisflood,
-            str_lisflood_folder,
-            str_par_file_to_run,
-            message=f"     -- {str_run_label} Running Initial LISFLOOD"
-        )
-        
-        #print(f"     -- Initial run completed in {flt_loop_time:.2f} seconds")
-        
-        print(
-                        f"     -- {str_run_label} Run {str_par_file_to_run [:-4]} "
-                        f"completed in {round(flt_loop_time)} seconds")
-    
-    
-    
-    b_use_startfile = False
+    # ==========================================================
+    # Build expected outflow columns
+    # ==========================================================
 
-    # compute addtional cols in dataframe
     df_parameter_files[
         ['mass_balance_filepath', 'parameter_file', 'expected_outflow']
     ] = df_parameter_files.apply(
         fn_build_columns,
         axis=1,
-        args=(
-            str_lisflood_folder,
-            str_stream_folder,
-            str_catchment
-        )
+        args=(str_lisflood_folder, str_stream_folder, str_catchment)
     )
 
-    # Model will run in series until str_stable_row_status is not 'ok'
-    # This will likely be a return of 'no_match' and will require the addition of a startfile
-    # Other than 'ok' or 'not_found' for str_stable_row_status is not good
-    
+    # ==========================================================
+    # Run log container
+    # ==========================================================
+
+    list_run_log = []
+
+    # ==========================================================
+    # FIRST RUN
+    # ==========================================================
+
+    b_use_startfile = False
+
+    str_par_file = os.path.basename(df_parameter_files.iloc[0]['filepath'])
+
+    flt_runtime = fn_run_with_spinner(
+        fn_run_docker_lisflood,
+        str_lisflood_folder,
+        str_par_file,
+        message="     -- 1 of {} Running Initial LISFLOOD".format(len(df_parameter_files))
+    )
+
+    list_run_log.append({
+        "run_index": 1,
+        "parameter_file": str_par_file,
+        "intensity": df_parameter_files.iloc[0]["intensity"],
+        "expected_outflow": df_parameter_files.iloc[0]["expected_outflow"],
+        "Qout": None,
+        "Qout_ratio": None,
+        "Qout_rel_change_rollavg": None,
+        "stable_time": None,
+        "runtime_sec": flt_runtime,
+        "stable_status": "initial_run",
+        "used_startfile": False
+    })
+
+    # ==========================================================
+    # MAIN LOOP
+    # ==========================================================
+
+    int_process_row_index = 0
+
     for index, row in df_parameter_files.iterrows():
-        if index >= int_process_row_index:
-    
-            str_run = int(index + 2)
-            str_run_label = f"{str_run} of {str_num_runs}: "
-            
-            #print(row['parameter_file'][:-4])
-    
-            str_stable_row_status, ps_first_stable_row = fn_get_stable_row(
-                row['mass_balance_filepath'],
-                row['expected_outflow'],
-                dict_all_params
+
+        if index < int_process_row_index:
+            continue
+
+        str_stable_row_status, ps_first_stable_row = fn_get_stable_row(
+            row['mass_balance_filepath'],
+            row['expected_outflow'],
+            dict_all_params
+        )
+
+        Qout = None
+        Qout_ratio = None
+        Qout_rel_change_rollavg = None
+        stable_time = None
+
+        if ps_first_stable_row is not None:
+            Qout = ps_first_stable_row.get("Qout")
+            Qout_ratio = ps_first_stable_row.get("Qout_ratio")
+            Qout_rel_change_rollavg = ps_first_stable_row.get("Qout_rel_change_rollavg")
+            stable_time = ps_first_stable_row.get("Time")
+
+        list_run_log.append({
+            "run_index": index + 1,
+            "parameter_file": row["parameter_file"],
+            "intensity": row["intensity"],
+            "expected_outflow": row["expected_outflow"],
+            "Qout": Qout,
+            "Qout_ratio": Qout_ratio,
+            "Qout_rel_change_rollavg": Qout_rel_change_rollavg,
+            "stable_time": stable_time,
+            "runtime_sec": None,
+            "stable_status": str_stable_row_status,
+            "used_startfile": b_use_startfile
+        })
+
+        if str_stable_row_status != "ok":
+
+            print(
+                f"     -- Stable Run not found: {row['parameter_file'][:-4]} "
+                f"Status: {str_stable_row_status}"
             )
-    
-            #print(str_stable_row_status)
-    
-            if str_stable_row_status != 'ok':
-                # something went wrong with this steps run
-                #print(str_stable_row_status)
-                print(f"     -- Stable Run not found: {row['parameter_file'][:-4]} Status: {str_stable_row_status}")
-                break
-            else:
-                # the current run was stable... prepare the next run without the introduction of a startfile
-                # revise the next row's parameter file
-    
-                # next parameter file in sequence
-                next_row = fn_get_next_intensity_row(df_parameter_files, row['intensity'])
-    
-                ##need row, next_row and ps_first_stable_row
-                str_par_file_to_run = fn_prep_next_paramter_file(row,
-                                                                 next_row,
-                                                                 ps_first_stable_row,
-                                                                 str_lisflood_folder,
-                                                                 b_use_startfile)
-    
-                if str_par_file_to_run is not None:
-                    # run the Docker container of lisflood-fp
 
-                    flt_loop_time = fn_run_with_spinner(
-                        fn_run_docker_lisflood,
-                        str_lisflood_folder,
-                        str_par_file_to_run,
-                        message=f"     -- {str_run_label} Running {next_row['parameter_file'][:-4]} LISFLOOD"
-                    )
-                    
-                    print(
-                        f"     -- {str_run_label} Run {next_row['parameter_file'][:-4]} "
-                        f"completed in {round(flt_loop_time)} seconds"
-                    )
+            int_process_row_index = index
+            break
 
-    # Stable run wasn't found... if it is 'no_match' try to run with using the last
-    # runs stable output at a startfile -- making it wet before running
+        next_row = fn_get_next_intensity_row(df_parameter_files, row['intensity'])
+
+        str_par_file_to_run = fn_prep_next_paramter_file(
+            row,
+            next_row,
+            ps_first_stable_row,
+            str_lisflood_folder,
+            b_use_startfile
+        )
+
+        if str_par_file_to_run is None:
+            continue
+
+        flt_runtime = fn_run_with_spinner(
+            fn_run_docker_lisflood,
+            str_lisflood_folder,
+            str_par_file_to_run,
+            message=f"     -- Running {next_row['parameter_file'][:-4]}"
+        )
+
+        list_run_log[-1]["runtime_sec"] = flt_runtime
+
+    # ==========================================================
+    # RETRY USING STARTFILE
+    # ==========================================================
 
     b_use_startfile = True
-    int_process_row_index = index
-    
-    for index, row in df_parameter_files.iterrows():
-        if index >= int_process_row_index:
-    
-            str_run = int(index + 2)
-            str_run_label = f"{str_run} of {str_num_runs}: "
-            
-            #print(row['parameter_file'][:-4])
-    
-            str_stable_row_status, ps_first_stable_row = fn_get_stable_row(
-                row['mass_balance_filepath'],
-                row['expected_outflow'],
-                dict_all_params
-            )
-    
-            #print(str_stable_row_status)
-    
-            if str_stable_row_status != 'ok':
-                # something went wrong with this steps run
-                print(f"     -- Stable Run not found: {row['parameter_file'][:-4]} Status: {str_stable_row_status}")
-                break
-            else:
-                # the current run was stable... prepare the next run with the introduction of a startfile
-                # revise the next row's parameter file
-    
-                # next parameter file in sequence
-                next_row = fn_get_next_intensity_row(df_parameter_files, row['intensity'])
-    
-                ##need row, next_row and ps_first_stable_row
-                str_par_file_to_run = fn_prep_next_paramter_file(row,
-                                                                 next_row,
-                                                                 ps_first_stable_row,
-                                                                 str_lisflood_folder,
-                                                                 b_use_startfile)
-    
-                if str_par_file_to_run is not None:
-                    # run the Docker container of lisflood-fp
 
-                    flt_loop_time = fn_run_with_spinner(
-                        fn_run_docker_lisflood,
-                        str_lisflood_folder,
-                        str_par_file_to_run,
-                        message=f"     -- {str_run_label} Running {next_row['parameter_file'][:-4]} LISFLOOD"
-                    )
-                    
-                    print(
-                        f"     -- {str_run_label} Run {next_row['parameter_file'][:-4]} "
-                        f"completed in {round(flt_loop_time)} seconds"
-                    )
+    for index, row in df_parameter_files.iterrows():
+
+        if index < int_process_row_index:
+            continue
+
+        next_row = fn_get_next_intensity_row(df_parameter_files, row['intensity'])
+
+        str_par_file_to_run = fn_prep_next_paramter_file(
+            row,
+            next_row,
+            ps_first_stable_row,
+            str_lisflood_folder,
+            b_use_startfile
+        )
+
+        if str_par_file_to_run is None:
+            continue
+
+        flt_runtime = fn_run_with_spinner(
+            fn_run_docker_lisflood,
+            str_lisflood_folder,
+            str_par_file_to_run,
+            message=f"     -- Running {next_row['parameter_file'][:-4]} (wet start)"
+        )
+
+        list_run_log.append({
+            "run_index": index + 1,
+            "parameter_file": next_row["parameter_file"],
+            "intensity": next_row["intensity"],
+            "expected_outflow": next_row["expected_outflow"],
+            "Qout": None,
+            "Qout_ratio": None,
+            "Qout_rel_change_rollavg": None,
+            "stable_time": None,
+            "runtime_sec": flt_runtime,
+            "stable_status": "startfile_run",
+            "used_startfile": True
+        })
+
+    # ==========================================================
+    # Create DataFrame from list
+    # ==========================================================
+
+    df_runs = pd.DataFrame(list_run_log)
+
+    # ==========================================================
+    # Write CSV
+    # ==========================================================
+
+    str_output_csv = os.path.join(
+        str_lisflood_folder,
+        "lisflood_run_summary.csv"
+    )
+
+    df_runs.to_csv(str_output_csv, index=False)
+
+    if b_print_output:
+        print(f"\n  -- Run summary written to:{str_output_csv}")
 
     os.chdir(str_original_cwd)
+
+    #return df_runs
 # .........................................................
 
 
