@@ -508,8 +508,6 @@ def fn_run_lisflood_02(
     int_process_row_index = 0
     # *************
     
-    #print(dict_all_params)
-    
     # ---------------
     # From local config
     str_catchment = dict_all_params['catchment']
@@ -522,12 +520,8 @@ def fn_run_lisflood_02(
     str_stream_folder = os.path.abspath(os.path.join(str_out_root_folder, str_catchment, "01_stream_delineation"))
     str_lisflood_folder = os.path.abspath(os.path.join(str_out_root_folder, str_catchment, "02_lisflood_input"))
 
-    #print(str_stream_folder)
-    #print(str_lisflood_folder)
     str_original_cwd = os.getcwd()
     os.chdir(str_lisflood_folder)
-    #print(os.getcwd())
-    #print('--------------')
 
     # create a list of all the parameter files
     list_par_files = fn_collect_par_values(str_lisflood_folder)
@@ -561,8 +555,6 @@ def fn_run_lisflood_02(
             str_par_file_to_run,
             message=f"     -- {str_run_label} Running Initial LISFLOOD"
         )
-        
-        #print(f"     -- Initial run completed in {flt_loop_time:.2f} seconds")
         
         print(
                         f"     -- {str_run_label} Run {str_par_file_to_run [:-4]} "
