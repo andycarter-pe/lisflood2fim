@@ -606,11 +606,11 @@ def fn_run_lisflood_02(
                 
                 list_run_log.append({
                     "catchment": str_catchment,
-                    "run_index": index,
+                    "run_index": int(index + 1),
                     "expected_profiles": str_num_runs,
-                    "parameter_file": df_parameter_files.iloc[0]["filepath"],
-                    "intensity": df_parameter_files.iloc[0]["intensity"],
-                    "expected_outflow": df_parameter_files.iloc[0]["expected_outflow"],
+                    "parameter_file": df_parameter_files.iloc[index]["filepath"],
+                    "intensity": df_parameter_files.iloc[index]["intensity"],
+                    "expected_outflow": df_parameter_files.iloc[index]["expected_outflow"],
                     "Qout": ps_first_stable_row["Qout"],
                     "Qout_ratio": ps_first_stable_row["Qout_ratio"],
                     "Qout_rel_change_rollavg": ps_first_stable_row["Qout_rel_change"],
@@ -626,11 +626,11 @@ def fn_run_lisflood_02(
                 
                 list_run_log.append({
                     "catchment": str_catchment,
-                    "run_index": index,
+                    "run_index": int(index + 1),
                     "expected_profiles": str_num_runs,
-                    "parameter_file": df_parameter_files.iloc[0]["filepath"],
-                    "intensity": df_parameter_files.iloc[0]["intensity"],
-                    "expected_outflow": df_parameter_files.iloc[0]["expected_outflow"],
+                    "parameter_file": df_parameter_files.iloc[index]["filepath"],
+                    "intensity": df_parameter_files.iloc[index]["intensity"],
+                    "expected_outflow": df_parameter_files.iloc[index]["expected_outflow"],
                     "Qout": ps_first_stable_row["Qout"],
                     "Qout_ratio": ps_first_stable_row["Qout_ratio"],
                     "Qout_rel_change_rollavg": ps_first_stable_row["Qout_rel_change"],
@@ -689,10 +689,39 @@ def fn_run_lisflood_02(
             if str_stable_row_status != 'ok':
                 # something went wrong with this steps run
                 print(f"     -- Stable Run not found: {row['parameter_file'][:-4]} Status: {str_stable_row_status}")
+                list_run_log.append({
+                    "catchment": str_catchment,
+                    "run_index": int(index + 1),
+                    "expected_profiles": str_num_runs,
+                    "parameter_file": df_parameter_files.iloc[index]["filepath"],
+                    "intensity": df_parameter_files.iloc[index]["intensity"],
+                    "expected_outflow": df_parameter_files.iloc[index]["expected_outflow"],
+                    "Qout": ps_first_stable_row["Qout"],
+                    "Qout_ratio": ps_first_stable_row["Qout_ratio"],
+                    "Qout_rel_change_rollavg": ps_first_stable_row["Qout_rel_change"],
+                    "stable_time": ps_first_stable_row['Time'],
+                    "runtime_sec": flt_loop_time,
+                    "stable_status": str_stable_row_status,
+                    "used_startfile": b_use_startfile})
                 break
             else:
                 # the current run was stable... prepare the next run with the introduction of a startfile
                 # revise the next row's parameter file
+                
+                list_run_log.append({
+                    "catchment": str_catchment,
+                    "run_index": int(index + 1),
+                    "expected_profiles": str_num_runs,
+                    "parameter_file": df_parameter_files.iloc[index]["filepath"],
+                    "intensity": df_parameter_files.iloc[index]["intensity"],
+                    "expected_outflow": df_parameter_files.iloc[index]["expected_outflow"],
+                    "Qout": ps_first_stable_row["Qout"],
+                    "Qout_ratio": ps_first_stable_row["Qout_ratio"],
+                    "Qout_rel_change_rollavg": ps_first_stable_row["Qout_rel_change"],
+                    "stable_time": ps_first_stable_row['Time'],
+                    "runtime_sec": flt_loop_time,
+                    "stable_status": str_stable_row_status,
+                    "used_startfile": b_use_startfile})
     
                 # next parameter file in sequence
                 next_row = fn_get_next_intensity_row(df_parameter_files, row['intensity'])
@@ -723,6 +752,26 @@ def fn_run_lisflood_02(
     # Write CSV
     # ==========================================================
     df_runs = pd.DataFrame(list_run_log)
+    
+    # Rename columns
+    df_runs = df_runs.rename(columns={
+        "intensity": "intensity(mm/hr)",
+        "expected_outflow": "Qexpected(cms)",
+        "Qout": "Qout(cms)",
+        "stable_time": "simulation_time(sec)",
+        "runtime_sec": "compute_time(sec)"
+    })
+
+    # Rounding
+    if "Qout(cms)" in df_runs.columns:
+        df_runs["Qout(cms)"] = df_runs["Qout(cms)"].round(1)
+    
+    if "Qout_ratio" in df_runs.columns:
+        df_runs["Qout_ratio"] = df_runs["Qout_ratio"].round(4)
+    
+    if "Qout_rel_change_rollavg" in df_runs.columns:
+        df_runs["Qout_rel_change_rollavg"] = df_runs["Qout_rel_change_rollavg"].round(5)
+    
     
     str_output_csv = os.path.join(
         str_lisflood_folder,
