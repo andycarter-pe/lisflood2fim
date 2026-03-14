@@ -5,6 +5,7 @@
 # Created by: Andy Carter, PE
 # Created - 2026.02.07
 # Revised - 2026.03.09 -- Creating output csv of run status
+# Revised - 2026.03.14 -- Reporting to include Qout if unstable (iteration 3)
 # ************************************************************
 
 # ************************************************************
@@ -145,9 +146,27 @@ def fn_get_stable_row(str_mass_balance_filepath, flt_expected_outflow, dict_all_
     )
 
     matches = df_mass.loc[mask]
+    
+    # --- last values ---
+    Qout_last = df_mass["Qout"].iloc[-1]
+    Qout_ratio_last = df_mass["Qout_ratio"].iloc[-1]
+    
+    Qout_rel_change_rollavg_last = (
+        df_mass["Qout_rel_change"]
+        .abs()
+        .tail(window)
+        .mean()
+        )
 
     if not matches.empty:
-        return 'ok', matches.iloc[0]
+        
+        ps_stable_row = matches.iloc[0].copy()
+
+        ps_stable_row["Qout_last"] = Qout_last
+        ps_stable_row["Qout_ratio_last"] = Qout_ratio_last
+        ps_stable_row["Qout_rel_change_rollavg_last"] = Qout_rel_change_rollavg_last
+        
+        return 'ok', ps_stable_row
 
     return 'no_match', None
 # -----------------
@@ -634,6 +653,14 @@ def fn_run_lisflood_02(
                 b_rerun_needed = True
                 print(f"     -- Stable Run not found: {row['parameter_file'][:-4]} Status: {str_stable_row_status}")
                 
+                if ps_first_stable_row is not None:
+                    Qout = ps_first_stable_row["Qout_last"]
+                    Qout_ratio = ps_first_stable_row["Qout_ratio_last"]
+                    Qout_rel_change_rollavg = ps_first_stable_row["Qout_rel_change_rollavg_last"]
+                    stable_time = ps_first_stable_row["Time"]
+                else:
+                    Qout = Qout_ratio = Qout_rel_change_rollavg = stable_time = None
+                
                 list_run_log.append({
                     "catchment": str_catchment,
                     "run_index": int(index + 1),
@@ -641,14 +668,15 @@ def fn_run_lisflood_02(
                     "parameter_file": df_parameter_files.iloc[index]["filepath"],
                     "intensity": df_parameter_files.iloc[index]["intensity"],
                     "expected_outflow": df_parameter_files.iloc[index]["expected_outflow"],
-                    "Qout": None,
-                    "Qout_ratio": None,
-                    "Qout_rel_change_rollavg": None,
-                    "stable_time": None,
+                    "Qout": Qout,
+                    "Qout_ratio": Qout_ratio,
+                    "Qout_rel_change_rollavg": Qout_rel_change_rollavg,
+                    "stable_time": stable_time,
                     "runtime_sec": flt_loop_time,
                     "stable_status": str_stable_row_status,
                     "used_startfile": b_use_startfile,
-                    "iteration_pass": 1})
+                    "iteration_pass": 1
+                })
                 break
             
             else:
@@ -723,6 +751,14 @@ def fn_run_lisflood_02(
                     b_rerun_needed_final_pass = True
                     
                     print(f"     -- Stable Run not found: {row['parameter_file'][:-4]} Status: {str_stable_row_status}")
+                    if ps_first_stable_row is not None:
+                        Qout = ps_first_stable_row["Qout_last"]
+                        Qout_ratio = ps_first_stable_row["Qout_ratio_last"]
+                        Qout_rel_change_rollavg = ps_first_stable_row["Qout_rel_change_rollavg_last"]
+                        stable_time = ps_first_stable_row["Time"]
+                    else:
+                        Qout = Qout_ratio = Qout_rel_change_rollavg = stable_time = None
+                    
                     list_run_log.append({
                         "catchment": str_catchment,
                         "run_index": int(index + 1),
@@ -730,14 +766,15 @@ def fn_run_lisflood_02(
                         "parameter_file": df_parameter_files.iloc[index]["filepath"],
                         "intensity": df_parameter_files.iloc[index]["intensity"],
                         "expected_outflow": df_parameter_files.iloc[index]["expected_outflow"],
-                        "Qout": None,
-                        "Qout_ratio": None,
-                        "Qout_rel_change_rollavg": None,
-                        "stable_time": None,
+                        "Qout": Qout,
+                        "Qout_ratio": Qout_ratio,
+                        "Qout_rel_change_rollavg": Qout_rel_change_rollavg,
+                        "stable_time": stable_time,
                         "runtime_sec": flt_loop_time,
                         "stable_status": str_stable_row_status,
                         "used_startfile": b_use_startfile,
-                        "iteration_pass": 2})
+                        "iteration_pass": 2
+                    })
                     break
                 else:
                     # the current run was stable... prepare the next run with the introduction of a startfile
@@ -815,6 +852,8 @@ def fn_run_lisflood_02(
                     ps_first_stable_row = pd.Series({'Time': int(str_simtime)})
                 else:
                     ps_first_stable_row['Time'] = int(str_simtime)
+                    
+                    
                 
                 ##need row, next_row and ps_first_stable_row (augmented)
                 str_par_file_to_run = fn_prep_next_paramter_file(row,
@@ -838,21 +877,50 @@ def fn_run_lisflood_02(
                         f"completed in {round(flt_loop_time)} seconds"
                     )
                     
-                    list_run_log.append({
-                        "catchment": str_catchment,
-                        "run_index": int(index + 1),
-                        "expected_profiles": str_num_runs,
-                        "parameter_file": df_parameter_files.iloc[index]["filepath"],
-                        "intensity": df_parameter_files.iloc[index]["intensity"],
-                        "expected_outflow": df_parameter_files.iloc[index]["expected_outflow"],
-                        "Qout": None,  #TODO -- this needs to be determined - 2026.03.13
-                        "Qout_ratio": None, #TODO -- this needs to be determined - 2026.03.13
-                        "Qout_rel_change_rollavg": None, #TODO -- this needs to be determined - 2026.03.13
-                        "stable_time": ps_first_stable_row['Time'],
-                        "runtime_sec": flt_loop_time,
-                        "stable_status": str_stable_row_status,
-                        "used_startfile": b_use_startfile,
-                        "iteration_pass": 3})
+                    if str_stable_row_status != 'ok':
+                        if ps_first_stable_row is not None:
+                            Qout = ps_first_stable_row["Qout_last"]
+                            Qout_ratio = ps_first_stable_row["Qout_ratio_last"]
+                            Qout_rel_change_rollavg = ps_first_stable_row["Qout_rel_change_rollavg_last"]
+                            stable_time = ps_first_stable_row["Time"]
+                        else:
+                            Qout = Qout_ratio = Qout_rel_change_rollavg = stable_time = None
+                            
+                        list_run_log.append({
+                            "catchment": str_catchment,
+                            "run_index": int(index + 1),
+                            "expected_profiles": str_num_runs,
+                            "parameter_file": df_parameter_files.iloc[index]["filepath"],
+                            "intensity": df_parameter_files.iloc[index]["intensity"],
+                            "expected_outflow": df_parameter_files.iloc[index]["expected_outflow"],
+                            "Qout": Qout,
+                            "Qout_ratio": Qout_ratio,
+                            "Qout_rel_change_rollavg": Qout_rel_change_rollavg,
+                            "stable_time": stable_time,
+                            "runtime_sec": flt_loop_time,
+                            "stable_status": str_stable_row_status,
+                            "used_startfile": b_use_startfile,
+                            "iteration_pass": 3
+                        })
+                    else:
+                        # this 'full time run' found a stable answer
+                        
+                        list_run_log.append({
+                            "catchment": str_catchment,
+                            "run_index": int(index + 1),
+                            "expected_profiles": str_num_runs,
+                            "parameter_file": df_parameter_files.iloc[index]["filepath"],
+                            "intensity": df_parameter_files.iloc[index]["intensity"],
+                            "expected_outflow": df_parameter_files.iloc[index]["expected_outflow"],
+                            "Qout": ps_first_stable_row["Qout"],
+                            "Qout_ratio": ps_first_stable_row["Qout_ratio"],
+                            "Qout_rel_change_rollavg": ps_first_stable_row["Qout_rel_change"],
+                            "stable_time": ps_first_stable_row['Time'],
+                            "runtime_sec": flt_loop_time,
+                            "stable_status": str_stable_row_status,
+                            "used_startfile": b_use_startfile,
+                            "iteration_pass": 3})
+                        
 
     # ==========================================================
     # Write CSV
