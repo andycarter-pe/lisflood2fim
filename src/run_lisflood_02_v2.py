@@ -447,8 +447,34 @@ def fn_run_lisflood_02(
     # ==================================================================
     global_config = configparser.ConfigParser()
     global_config.read(str_global_config_file_path)
-
+    
     global_section_schema = {
+        'datasource': [
+            'url_divides',
+            'url_flowpaths',
+            'vrt_terrain',
+            'url_roads',
+            'atlas_14_1000yr_5min',
+            'atlas_14_1yr_24hr'
+        ],
+        'lisflood_settings': [
+            'downscale',
+            'terrain_buffer_m',
+            'fpfric',
+            'initial_tstep',
+            'depththresh',
+            'max_Froude',
+            'outflow_boundary_slope',
+            'perct_bottom_line',
+            'perct_top_line',
+            'stream_threshold_sq_mi'
+        ],
+        'flow_parameters': [
+            'num_steps',
+            'timesteps',
+            'output_step',
+            'mass_balance_step'
+        ],
         'stable_run_paramters': [
             'window',
             'min_Qout_ratio',
@@ -456,6 +482,7 @@ def fn_run_lisflood_02(
             'max_rolling_avg_stability'
         ]
     }
+    
 
     dict_global_params = {}
 
@@ -620,7 +647,8 @@ def fn_run_lisflood_02(
                     "stable_time": None,
                     "runtime_sec": flt_loop_time,
                     "stable_status": str_stable_row_status,
-                    "used_startfile": b_use_startfile})
+                    "used_startfile": b_use_startfile,
+                    "iteration_pass": 1})
                 break
             
             else:
@@ -640,7 +668,8 @@ def fn_run_lisflood_02(
                     "stable_time": ps_first_stable_row['Time'],
                     "runtime_sec": flt_loop_time,
                     "stable_status": str_stable_row_status,
-                    "used_startfile": b_use_startfile})
+                    "used_startfile": b_use_startfile,
+                    "iteration_pass": 1})
     
                 # next parameter file in sequence
                 next_row = fn_get_next_intensity_row(df_parameter_files, row['intensity'])
@@ -707,7 +736,8 @@ def fn_run_lisflood_02(
                         "stable_time": None,
                         "runtime_sec": flt_loop_time,
                         "stable_status": str_stable_row_status,
-                        "used_startfile": b_use_startfile})
+                        "used_startfile": b_use_startfile,
+                        "iteration_pass": 2})
                     break
                 else:
                     # the current run was stable... prepare the next run with the introduction of a startfile
@@ -726,7 +756,8 @@ def fn_run_lisflood_02(
                         "stable_time": ps_first_stable_row['Time'],
                         "runtime_sec": flt_loop_time,
                         "stable_status": str_stable_row_status,
-                        "used_startfile": b_use_startfile})
+                        "used_startfile": b_use_startfile,
+                        "iteration_pass": 2})
         
                     # next parameter file in sequence
                     next_row = fn_get_next_intensity_row(df_parameter_files, row['intensity'])
@@ -814,7 +845,8 @@ def fn_run_lisflood_02(
                     "stable_time": ps_first_stable_row['Time'],
                     "runtime_sec": flt_loop_time,
                     "stable_status": str_stable_row_status,
-                    "used_startfile": b_use_startfile})
+                    "used_startfile": b_use_startfile,
+                    "iteration_pass": 3})
 
     # ==========================================================
     # Write CSV

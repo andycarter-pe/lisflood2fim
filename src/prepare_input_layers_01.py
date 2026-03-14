@@ -1003,6 +1003,12 @@ def fn_prepare_input_layers_01(
             'timesteps',
             'output_step',
             'mass_balance_step'
+        ],
+        'stable_run_paramters': [
+            'window',
+            'min_Qout_ratio',
+            'max_Qout_ratio',
+            'max_rolling_avg_stability'
         ]
     }
 
