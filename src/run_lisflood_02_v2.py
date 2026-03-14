@@ -879,6 +879,9 @@ def fn_run_lisflood_02(
                     
                     if str_stable_row_status != 'ok':
                         if ps_first_stable_row is not None:
+                            print('----------------')
+                            print(ps_first_stable_row)
+                            print('----------------')
                             Qout = ps_first_stable_row["Qout_last"]
                             Qout_ratio = ps_first_stable_row["Qout_ratio_last"]
                             Qout_rel_change_rollavg = ps_first_stable_row["Qout_rel_change_rollavg_last"]
