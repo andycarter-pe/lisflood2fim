@@ -879,13 +879,14 @@ def fn_run_lisflood_02(
                     
                     if str_stable_row_status != 'ok':
                         if ps_first_stable_row is not None:
+                            # TODO -- 2026.03.14 -- error checking
                             print('----------------')
                             print(ps_first_stable_row)
                             print('----------------')
-                            Qout = ps_first_stable_row["Qout_last"]
-                            Qout_ratio = ps_first_stable_row["Qout_ratio_last"]
-                            Qout_rel_change_rollavg = ps_first_stable_row["Qout_rel_change_rollavg_last"]
-                            stable_time = ps_first_stable_row["Time"]
+                            Qout = ps_first_stable_row.get("Qout_last")
+                            Qout_ratio = ps_first_stable_row.get("Qout_ratio_last")
+                            Qout_rel_change_rollavg = ps_first_stable_row.get("Qout_rel_change_rollavg_last")
+                            stable_time = ps_first_stable_row.get("Time")
                         else:
                             Qout = Qout_ratio = Qout_rel_change_rollavg = stable_time = None
                             
