@@ -808,7 +808,12 @@ def fn_run_lisflood_02(
             
             # create a simulation time that is the "full time"
             # Overwrite to full time (minus buffer)
-            ps_first_stable_row['Time'] = int(str_simtime)
+            
+            # If no stable row found, create an empty Series
+            if ps_first_stable_row is None:
+                ps_first_stable_row = pd.Series({'Time': int(str_simtime)})
+            else:
+                ps_first_stable_row['Time'] = int(str_simtime)
             
             ##need row, next_row and ps_first_stable_row (augmented)
             str_par_file_to_run = fn_prep_next_paramter_file(row,
