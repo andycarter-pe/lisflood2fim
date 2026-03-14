@@ -793,65 +793,66 @@ def fn_run_lisflood_02(
         int_timesteps = int(dict_all_params['timesteps'])
         str_simtime = str(int_timesteps * 3600 - 5400) # full time minus step 1.5 hour buffer ~ Line 326
     
-        if index >= int_process_row_index:
-            str_run = int(index + 2)
-            str_run_label = f"{str_run} of {str_num_runs}: "
-            
-            str_stable_row_status, ps_first_stable_row = fn_get_stable_row(
-                    row['mass_balance_filepath'],
-                    row['expected_outflow'],
-                    dict_all_params
-                )
-            
-            # next parameter file in sequence
-            next_row = fn_get_next_intensity_row(df_parameter_files, row['intensity'])
-            
-            # create a simulation time that is the "full time"
-            # Overwrite to full time (minus buffer)
-            
-            # If no stable row found, create an empty Series
-            if ps_first_stable_row is None:
-                ps_first_stable_row = pd.Series({'Time': int(str_simtime)})
-            else:
-                ps_first_stable_row['Time'] = int(str_simtime)
-            
-            ##need row, next_row and ps_first_stable_row (augmented)
-            str_par_file_to_run = fn_prep_next_paramter_file(row,
-                                                             next_row,
-                                                             ps_first_stable_row,
-                                                             str_lisflood_folder,
-                                                             b_use_startfile)
-            
-            if str_par_file_to_run is not None:
-                # run the Docker container of lisflood-fp
-
-                flt_loop_time = fn_run_with_spinner(
-                    fn_run_docker_lisflood,
-                    str_lisflood_folder,
-                    str_par_file_to_run,
-                    message=f"     -- {str_run_label} Running {next_row['parameter_file'][:-4]} LISFLOOD"
-                )
+        for index, row in df_parameter_files.iterrows():
+            if index >= int_process_row_index:
+                str_run = int(index + 2)
+                str_run_label = f"{str_run} of {str_num_runs}: "
                 
-                print(
-                    f"     -- {str_run_label} Run {next_row['parameter_file'][:-4]} "
-                    f"completed in {round(flt_loop_time)} seconds"
-                )
+                str_stable_row_status, ps_first_stable_row = fn_get_stable_row(
+                        row['mass_balance_filepath'],
+                        row['expected_outflow'],
+                        dict_all_params
+                    )
                 
-                list_run_log.append({
-                    "catchment": str_catchment,
-                    "run_index": int(index + 1),
-                    "expected_profiles": str_num_runs,
-                    "parameter_file": df_parameter_files.iloc[index]["filepath"],
-                    "intensity": df_parameter_files.iloc[index]["intensity"],
-                    "expected_outflow": df_parameter_files.iloc[index]["expected_outflow"],
-                    "Qout": None,  #TODO -- this needs to be determined - 2026.03.13
-                    "Qout_ratio": None, #TODO -- this needs to be determined - 2026.03.13
-                    "Qout_rel_change_rollavg": None, #TODO -- this needs to be determined - 2026.03.13
-                    "stable_time": ps_first_stable_row['Time'],
-                    "runtime_sec": flt_loop_time,
-                    "stable_status": str_stable_row_status,
-                    "used_startfile": b_use_startfile,
-                    "iteration_pass": 3})
+                # next parameter file in sequence
+                next_row = fn_get_next_intensity_row(df_parameter_files, row['intensity'])
+                
+                # create a simulation time that is the "full time"
+                # Overwrite to full time (minus buffer)
+                
+                # If no stable row found, create an empty Series
+                if ps_first_stable_row is None:
+                    ps_first_stable_row = pd.Series({'Time': int(str_simtime)})
+                else:
+                    ps_first_stable_row['Time'] = int(str_simtime)
+                
+                ##need row, next_row and ps_first_stable_row (augmented)
+                str_par_file_to_run = fn_prep_next_paramter_file(row,
+                                                                 next_row,
+                                                                 ps_first_stable_row,
+                                                                 str_lisflood_folder,
+                                                                 b_use_startfile)
+                
+                if str_par_file_to_run is not None:
+                    # run the Docker container of lisflood-fp
+    
+                    flt_loop_time = fn_run_with_spinner(
+                        fn_run_docker_lisflood,
+                        str_lisflood_folder,
+                        str_par_file_to_run,
+                        message=f"     -- {str_run_label} Running {next_row['parameter_file'][:-4]} LISFLOOD"
+                    )
+                    
+                    print(
+                        f"     -- {str_run_label} Run {next_row['parameter_file'][:-4]} "
+                        f"completed in {round(flt_loop_time)} seconds"
+                    )
+                    
+                    list_run_log.append({
+                        "catchment": str_catchment,
+                        "run_index": int(index + 1),
+                        "expected_profiles": str_num_runs,
+                        "parameter_file": df_parameter_files.iloc[index]["filepath"],
+                        "intensity": df_parameter_files.iloc[index]["intensity"],
+                        "expected_outflow": df_parameter_files.iloc[index]["expected_outflow"],
+                        "Qout": None,  #TODO -- this needs to be determined - 2026.03.13
+                        "Qout_ratio": None, #TODO -- this needs to be determined - 2026.03.13
+                        "Qout_rel_change_rollavg": None, #TODO -- this needs to be determined - 2026.03.13
+                        "stable_time": ps_first_stable_row['Time'],
+                        "runtime_sec": flt_loop_time,
+                        "stable_status": str_stable_row_status,
+                        "used_startfile": b_use_startfile,
+                        "iteration_pass": 3})
 
     # ==========================================================
     # Write CSV
@@ -869,14 +870,15 @@ def fn_run_lisflood_02(
 
     # Rounding
     if "Qout(cms)" in df_runs.columns:
-        df_runs["Qout(cms)"] = df_runs["Qout(cms)"].round(1)
+        df_runs["Qout(cms)"] = pd.to_numeric(df_runs["Qout(cms)"], errors="coerce").round(1)
     
     if "Qout_ratio" in df_runs.columns:
-        df_runs["Qout_ratio"] = df_runs["Qout_ratio"].round(4)
+        df_runs["Qout_ratio"] = pd.to_numeric(df_runs["Qout_ratio"], errors="coerce").round(4)
     
     if "Qout_rel_change_rollavg" in df_runs.columns:
-        df_runs["Qout_rel_change_rollavg"] = df_runs["Qout_rel_change_rollavg"].round(5)
-    
+        df_runs["Qout_rel_change_rollavg"] = pd.to_numeric(
+            df_runs["Qout_rel_change_rollavg"], errors="coerce"
+        ).round(5)
     
     str_output_csv = os.path.join(
         str_lisflood_folder,
