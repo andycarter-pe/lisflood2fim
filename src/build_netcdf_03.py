@@ -4,6 +4,7 @@
 #
 # Created by: Andy Carter, PE
 # Created - 2026.02.07
+# Modified - 2026.03.16 -- flt_min_depth_allowed = 0.025 *Mannual to this file*
 # ************************************************************
 
 # ************************************************************
@@ -262,6 +263,8 @@ def fn_build_netcdf_03(
     str_intensity_units = 'mm h-1'
     str_raster_vertical_units = 'meters'
     
+    flt_min_depth_allowed = 0.025 # meters
+    
     # -----------------------------
     # LOAD TERRAIN
     # -----------------------------
@@ -280,8 +283,9 @@ def fn_build_netcdf_03(
         # Capture CRS (assumes all rasters have same CRS)
         crs = da.rio.crs
         
-        # Replace 0 with NaN
-        da = da.where(da != 0)
+        # Replace 0 with NaN -- also remove values less than min depth
+        #da = da.where(da != 0)
+        da = da.where((da != 0) & (da >= flt_min_depth_allowed))
         
         # Assign variable name
         da.name = str_type

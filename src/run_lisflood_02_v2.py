@@ -823,6 +823,8 @@ def fn_run_lisflood_02(
 
     # Even the runs with a startfile may not stabilize ... run the entire simuloation time
     # run 'unstable' runs for the entire duration
+    
+    # TODO 
     if b_rerun_needed_final_pass:
         b_use_startfile = False
         int_process_row_index = index
@@ -879,10 +881,7 @@ def fn_run_lisflood_02(
                     
                     if str_stable_row_status != 'ok':
                         if ps_first_stable_row is not None:
-                            # TODO -- 2026.03.14 -- error checking
-                            print('----------------')
-                            print(ps_first_stable_row)
-                            print('----------------')
+                            # Note that .get return None if not there
                             Qout = ps_first_stable_row.get("Qout_last")
                             Qout_ratio = ps_first_stable_row.get("Qout_ratio_last")
                             Qout_rel_change_rollavg = ps_first_stable_row.get("Qout_rel_change_rollavg_last")
