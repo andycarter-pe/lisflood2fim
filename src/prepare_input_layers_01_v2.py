@@ -911,7 +911,7 @@ def fn_condition_terrain(dict_filepaths,
     # Step 4b -- Fix diagonal burns for D4 compatibility  <-- INSERT HERE
     str_dem_burn_fixed = dict_filepaths['dem_burn_roads'].replace('.tif', '_d4fixed.tif')
     str_dem_burn_fixed, n_bridges = fn_fix_diagonal_burns(
-        dict_filepaths['dem_breach'],        # DEM before the burn
+        dict_filepaths['dem_clipped'],        # DEM before the burn
         dict_filepaths['dem_burn_roads'],    # DEM after the burn
         str_dem_burn_fixed
     )
