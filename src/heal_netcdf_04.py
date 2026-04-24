@@ -488,9 +488,6 @@ def fn_heal_netcdf_04(
     
     #print(dict_all_params)
     
-    if b_print_output:
-        print('  -- STEP 1: Determing burned terrain cells')
-    
     # From local config
     str_out_root_folder = dict_all_params['out_root_folder']
     str_catchment = dict_all_params['catchment']
@@ -557,12 +554,13 @@ def fn_heal_netcdf_04(
                             INT_MIN_PIXELS, b_print_output)
     
     # --------------------------------------------------
+    ''' TODO -- 20260424 -- There is an error here!!
     if b_print_output:
         print('  -- STEP 5: Replacing terrain with unburned DEM')
 
     fn_replace_terrain(str_denoised_netcdf_filepath, 
                        str_clipped_dem_filepath, b_print_output)
-    
+    '''
     
 # .........................................................
 
