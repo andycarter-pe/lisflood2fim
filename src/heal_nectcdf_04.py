@@ -1,8 +1,17 @@
 # ************************************************************
 # LISFLOOD-FP to FIM
 # Script 04 - heal netCDF FIM
-# Remove Culvert buring and hydroenforcing from FIM stack
-# Remove disconnected 'noise' from the FIM stack
+#
+# Step 1 — Computing a DEM difference raster between the raw clipped DEM 
+# and the burned/hydro-enforced DEM to identify modified terrain cells.
+#
+# Step 2 — Applying that correction back into the netCDF: raising terrain values
+# and reducing depth values accordingly, clipping any resulting negatives to NoData.
+#
+# Step 3 — Removing shallow pixels below a X-inch threshold.
+#
+# Step 4 — Denoising by removing small disconnected wet-pixel 
+# clusters (< XX pixels, D8 connectivity).
 #
 # Created by: Andy Carter, PE
 # Created - 2026.04.24
@@ -343,6 +352,51 @@ def fn_denoise_depth_layers(str_nc_in, str_nc_out, int_min_pixels, b_print_outpu
 # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 
+# ==============================
+def fn_replace_terrain(str_nc_path, str_clipped_dem_path, b_print_output) -> None:
+    """
+    Replace the 'terrain' variable in the netCDF with values from the
+    original (unburned) clipped DEM, resampled to match the netCDF grid.
+    """
+    if b_print_output:
+        print(f"  Replacing terrain with unburned DEM: {str_clipped_dem_path}")
+
+    with nc.Dataset(str_nc_path, "r+") as ds:
+        var_terrain = ds.variables["terrain"]
+        int_ny, int_nx = var_terrain.shape
+
+        # Load and align the clipped (unburned) DEM to the netCDF grid
+        da_clipped = rxr.open_rasterio(str_clipped_dem_path, masked=True).squeeze()
+
+        if da_clipped.shape != (int_ny, int_nx):
+            if b_print_output:
+                print(f"    Resampling clipped DEM: {da_clipped.shape} → ({int_ny}, {int_nx})")
+            da_clipped = da_clipped.rio.reproject(
+                da_clipped.rio.crs,
+                shape=(int_ny, int_nx),
+                resampling=Resampling.bilinear
+            )
+
+        arr_clipped = da_clipped.values.astype(np.float64)
+
+        # Preserve existing nodata mask from the netCDF terrain
+        flt_terrain_nd  = var_terrain._FillValue if hasattr(var_terrain, "_FillValue") else -9999.0
+        arr_terrain_old = var_terrain[:].astype(np.float64)
+        bool_nd         = np.isclose(arr_terrain_old, flt_terrain_nd, atol=1e-3) | np.isnan(arr_terrain_old)
+
+        # Write unburned values, keeping nodata cells intact
+        arr_new = arr_clipped.copy()
+        arr_new[bool_nd] = flt_terrain_nd
+
+        var_terrain[:] = arr_new.astype(np.float32)
+
+        if b_print_output:
+            n_updated = int((~bool_nd).sum())
+            print(f"    Terrain cells replaced : {n_updated:,}")
+            print(f"    NoData cells preserved : {int(bool_nd.sum()):,}")
+# ==============================
+
+
 # .........................................................
 def fn_heal_netcdf_04(
     str_global_config_file_path,
@@ -503,7 +557,13 @@ def fn_heal_netcdf_04(
                             INT_MIN_PIXELS, b_print_output)
     
     # --------------------------------------------------
-    # TODO: 2026.04.24 -- revise terrain in netCDF to be the unburned terrain
+    if b_print_output:
+        print('  -- STEP 5: Replacing terrain with unburned DEM')
+
+    fn_replace_terrain(str_denoised_netcdf_filepath, 
+                       str_clipped_dem_filepath, b_print_output)
+    
+    
 # .........................................................
 
 
