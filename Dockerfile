@@ -115,3 +115,7 @@ SHELL ["conda", "run", "-n", "geo", "/bin/bash", "-c"]
 
 # Default command
 CMD ["/bin/bash"]
+
+# Activate geo environment by default and set working directory
+RUN echo "conda activate geo" >> /root/.bashrc
+WORKDIR /mnt
