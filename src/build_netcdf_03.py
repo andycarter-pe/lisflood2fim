@@ -5,6 +5,7 @@
 # Created by: Andy Carter, PE
 # Created - 2026.02.07
 # Modified - 2026.03.16 -- flt_min_depth_allowed = 0.025 *Mannual to this file*
+# Modified - 2026.06.04 -- Terrain changed to dem_burn_roads_d4fixed_5070.asc
 # ************************************************************
 
 # ************************************************************
@@ -255,7 +256,7 @@ def fn_build_netcdf_03(
     # -----------------------------
     # INPUTS
     # -----------------------------
-    str_terrain = os.path.join(str_out_root_folder, str_catchment, "01_stream_delineation", "dem_clipped_5070.asc")
+    str_terrain = os.path.join(str_out_root_folder, str_catchment, "01_stream_delineation", "dem_burn_roads_d4fixed_5070.asc")
     str_crs = "EPSG:5070"
     
     str_id = str_catchment
