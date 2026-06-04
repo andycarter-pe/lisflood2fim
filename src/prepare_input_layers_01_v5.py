@@ -1073,7 +1073,7 @@ def fn_condition_terrain(dict_filepaths,
         f"--dem={dict_filepaths['dem_breach']}",          # Input DEM (breached or preprocessed)
         f"--streams={dict_filepaths['stream_vector']}",   # Vector streams (preliminary pass 1)
         f"--roads={dict_filepaths['clipped_roads']}",     # Vector roads (centerlines)
-        f"--output={dict_filepaths['dem_burn_roads']}",   # Output DEM with burned culverts
+        f"--output={dict_filepaths['dem_burn_roads']}",    # Output DEM with burned culverts
         f"--width=20"           # Maximum road embankment width in map units
     ]
 
@@ -1624,16 +1624,16 @@ def fn_prepare_input_layers_01(
             gdf['hydrofabric_source']=str_url_divides
         gdf.to_file(str_gpkg_filepath, layer=layer_name, driver="GPKG")
         
-    # Create a boundary condition from the terrain file
+   # Create a boundary condition from the terrain file
     if b_print_output:
         print('  -- STEP 5: Outflow Boundary Slope')
     str_slope = dict_all_params['outflow_boundary_slope']
     
     if int_catchment_count > 1:
-        # need to use entire terrain pluss lateral watersheds
-        str_bci_path = fn_raster_edge_cells_to_bci(dict_paths_lateral['dem_clipped'],str_slope)
+        # need to use entire terrain plus lateral watersheds
+        str_bci_path = fn_raster_edge_cells_to_bci(dict_paths_lateral['dem_burn_roads'], str_slope)
     else:
-        str_bci_path = fn_raster_edge_cells_to_bci(dict_paths_base['dem_clipped'],str_slope)
+        str_bci_path = fn_raster_edge_cells_to_bci(dict_paths_base['dem_burn_roads'], str_slope)
     
     src = Path(str_bci_path)
     dst = src.parents[1] / "02_lisflood_input" / src.name
@@ -1641,17 +1641,15 @@ def fn_prepare_input_layers_01(
     
     if b_print_output:
         print('  -- STEP 6: Prep terrain for LISFLOOD')
-    # Convert the geotiff to ASC for use in LISFLOOD-FP
-    
-    # Output ASCII Grid
-    #asc_out = r'E:\cog_tile_site\cat-2402255\01_stream_delineation\dem_clipped_5070.asc'
-    #str_dem_asc_clipped_filepath
-    
-    # Open with rioxarray
+    # Convert the D4-fixed, road-burned GeoTIFF to ASC for use in LISFLOOD-FP
+
+    # Select the correct (D4-fixed) dem_burn_roads path
     if int_catchment_count > 1:
-        dem = rioxarray.open_rasterio(dict_paths_lateral['dem_burn_roads'], masked=True)
+        str_dem_burn_roads_d4fixed = dict_paths_lateral['dem_burn_roads']
     else:
-        dem = rioxarray.open_rasterio(dict_paths_base['dem_burn_roads'], masked=True)
+        str_dem_burn_roads_d4fixed = dict_paths_base['dem_burn_roads']
+
+    dem = rioxarray.open_rasterio(str_dem_burn_roads_d4fixed, masked=True)
     
     # If the raster has multiple bands, select first band
     if dem.rio.count > 1:
@@ -1662,6 +1660,8 @@ def fn_prepare_input_layers_01(
         dem.rio.write_nodata(-9999, inplace=True)
     
     # Write to ASCII Grid
+    str_dem_asc_clipped_filepath = os.path.abspath(
+        os.path.join(str_out_folder_streams, 'dem_burn_roads_d4fixed_5070.asc'))
     dem.rio.to_raster(str_dem_asc_clipped_filepath, driver='AAIGrid')
     
     # Copy from one folder to another
@@ -1672,21 +1672,10 @@ def fn_prepare_input_layers_01(
     if b_print_output:
         print('  -- STEP 7: Create Mannings n layer')
         
-    # --- Manning's roughness on the same grid ---
-    # Use the original burn_roads path (before d4fix suffix was applied)
-    # by rebuilding from the known base filename to avoid _d4fixed in the name.
-    str_burn_roads_original = (
-        fn_build_path(str_out_folder_streams, fn_two_digit_string(1), 'dem_burn_roads_5070.tif')
-        if int_catchment_count > 1
-        else fn_build_path(str_out_folder_streams, fn_two_digit_string(0), 'dem_burn_roads_5070.tif')
-    )
-    # Use the d4fixed DEM for the actual grid geometry (it exists and is correct)
-    # but name the Manning's ASC after the clean original stem
-    str_terrain_for_mannings = str_burn_roads_original
-    
+    # --- Manning's roughness snapped to the same D4-fixed grid ---
     str_mannings_asc_path = fn_create_mannings_roughness_asc(
         str_url_nlcd_mannings   = dict_all_params['url_nlcd_mannings'],
-        str_terrain_tif_path    = str_terrain_for_mannings,
+        str_terrain_tif_path    = str_dem_burn_roads_d4fixed,
         str_out_folder_streams  = str_out_folder_streams,
         str_out_folder_lisflood = str_out_folder_streams_02,
         b_print_output          = b_print_output
