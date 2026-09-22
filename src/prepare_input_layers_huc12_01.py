@@ -9,6 +9,9 @@
 # revised - 2026.05.06 -- Creating Manning's roughness per terrain cell
 # revised - 2026.05.08 -- Intensity per Atlas-14 geotiffs
 # revised - 2026.06.05 -- D4 fix: use dem_clipped (not dem_breach) as burned-pixel reference; 0.01 m threshold; lowest-elevation bridge selection
+# revised - 2026.09.22 -- Refactored for single HUC-12 AOI polygon
+#                          (removes NextGen divide/flowpath lookups and all
+#                           lateral watershed logic)
 # ************************************************************
 
 # ************************************************************
@@ -45,8 +48,6 @@ import warnings
 
 import shutil
 from pathlib import Path
-
-
 # ************************************************************
 
 
@@ -75,37 +76,50 @@ def fn_str_to_bool(value):
 
 
 # ---------------------
-def fn_get_divide_gdf(fgb_path, divide_id):
+def fn_get_huc12_gdf(str_huc12_path, str_huc12_id):
     """
-    Returns a GeoDataFrame containing the feature(s) for a given divide_id
-    from a FlatGeobuf (.fgb) file.
+    Returns a GeoDataFrame containing the feature(s) matching str_huc12_id
+    from a local vector file (shapefile, GeoJSON, GPKG, etc.).
+    Matches against the 'huc12' field (case-insensitive column search).
+
+    Parameters
+    ----------
+    str_huc12_path : str
+        Path to the local vector file containing HUC-12 polygons.
+    str_huc12_id : str
+        The 12-digit HUC-12 code to select (e.g. '120702050402').
+
+    Returns
+    -------
+    GeoDataFrame
+        Filtered to the matching HUC-12 feature(s), reprojected to EPSG:5070.
     """
-    records = []
+    gdf = gpd.read_file(str_huc12_path)
 
-    with fiona.open(fgb_path, layer=None) as src:
-        crs_dict = src.crs
-        # Convert dict to EPSG string if possible
-        if crs_dict:
-            try:
-                crs_str = crs_dict.get('init', None)
-                if crs_str:
-                    crs_str = crs_str.replace('+init=', '').upper()  # EPSG:XXXX
-                else:
-                    crs_str = None
-            except Exception:
-                crs_str = None
-        else:
-            crs_str = None
+    # Normalise column names to lowercase for a robust match
+    gdf.columns = [c.lower() for c in gdf.columns]
 
-        for feature in src:
-            if feature["properties"].get("divide_id") == divide_id:
-                records.append(feature)
+    if 'huc12' not in gdf.columns:
+        raise KeyError(
+            f"No 'huc12' column found in {str_huc12_path}. "
+            f"Available columns: {list(gdf.columns)}"
+        )
 
-    if not records:
-        return gpd.GeoDataFrame(columns=["geometry"], geometry="geometry", crs=crs_str)
+    # Match as string (strips accidental leading-zero issues)
+    mask = gdf['huc12'].astype(str).str.strip() == str(str_huc12_id).strip()
+    result = gdf[mask].copy()
 
-    gdf = gpd.GeoDataFrame.from_features(records, crs=crs_str)
-    return gdf
+    if result.empty:
+        raise ValueError(
+            f"No feature found with huc12 == '{str_huc12_id}' in {str_huc12_path}"
+        )
+
+    # Ensure EPSG:5070 (same CRS used throughout the rest of the script)
+    if result.crs is None:
+        result = result.set_crs("EPSG:4326")
+    result = result.to_crs("EPSG:5070")
+
+    return result
 # ---------------------
 
 
@@ -165,123 +179,11 @@ def fn_create_terrain_tif(str_catchment_id,
             with rasterio.open(output_file, "w", **out_meta) as dest:
                 dest.write(out_image[0], 1)
     else:
-        print(f" No feature found with divide_id: {str_catchment_id}")
+        print(f" No feature found with huc12: {str_catchment_id}")
         output_file = ''
 
     return(output_file)
 # -----------------
-
-
-# ................
-# Function to get last point of a LineString or MultiLineString
-def fn_compute_last_point(geom):
-    if geom.geom_type == "LineString":
-        return Point(geom.coords[-1])
-    elif geom.geom_type == "MultiLineString":
-        return Point(list(geom.geoms[-1].coords)[-1])
-    return None
-# ................
-
-
-# ----------------------------
-def fn_get_divides_lateral_gdf(str_wb,
-                               polygon,
-                               str_url_divides,
-                               str_url_flowpaths,
-                               dict_all_params):
-    
-    
-    flt_perct_bottom_line = float(dict_all_params['perct_bottom_line'])
-    flt_perct_top_line = float(dict_all_params['perct_top_line'])
-
-    # --- Read only flowpaths within polygon bbox ---
-    bbox = tuple(polygon.total_bounds)
-    flowpaths = gpd.read_file(str_url_flowpaths, bbox=bbox)
-
-    # --- Select target line ---
-    target_line = flowpaths.loc[flowpaths["id"] == str_wb]
-
-    if target_line.empty:
-        raise ValueError(f"No line with id '{str_wb}' found.")
-
-    target_geom = target_line.geometry.iloc[0]
-
-    # Merge MultiLineString if needed
-    if target_geom.geom_type == "MultiLineString":
-        target_geom = linemerge(target_geom)
-
-    target_length = target_geom.length
-
-    candidates = flowpaths.copy()
-    candidates["last_point"] = candidates.geometry.apply(fn_compute_last_point)
-
-    # Filter lines whose last point intersects target
-    mask = candidates["last_point"].apply(lambda pt: pt.intersects(target_geom))
-    lines_touching_target = candidates.loc[mask].copy()
-
-    # Compute normalized measure
-    lines_touching_target["measure"] = (
-        lines_touching_target["last_point"]
-        .apply(lambda pt: target_geom.project(pt) / target_length)
-    )
-
-    # Drop temp column and sort
-    lines_touching_target = (
-        lines_touching_target
-        .drop(columns="last_point")
-        .sort_values("measure")
-        .reset_index(drop=True)
-    )
-
-    # --- Remove lateral inflow streams that are too close to beginning
-    # or ending of the main stream ---
-    lines_touching_target = (
-        lines_touching_target[
-            (lines_touching_target["measure"] >= flt_perct_bottom_line) &
-            (lines_touching_target["measure"] <= flt_perct_top_line)
-        ]
-        .reset_index(drop=True)
-    )
-
-    # --- List of lateral inflow streams
-    list_id_lateral = lines_touching_target["id"].tolist()
-
-    # --- Add the mainstream to the list
-    list_id_lateral.append(str_wb)
-    
-    int_catchment_count = len(list_id_lateral)
-
-    # --- convert 'wb-' to 'cat-'
-    list_id_lateral_cat = ["cat-" + item[3:] for item in list_id_lateral]
-
-    gdf_list = []
-
-    for divide_id in list_id_lateral_cat:
-        gdf = fn_get_divide_gdf(str_url_divides, divide_id)
-
-        if not gdf.empty:
-            gdf_list.append(gdf)
-
-    if not gdf_list:
-        raise ValueError("No polygons were returned.")
-
-    # --- Combine into single GeoDataFrame ---
-    combined = gpd.GeoDataFrame(
-        pd.concat(gdf_list, ignore_index=True),
-        crs=gdf_list[0].crs
-    )
-
-    # --- Merge into single polygon geometry ---
-    merged_polygon = unary_union(combined.geometry)
-
-    # Wrap back into GeoDataFrame
-    merged_gdf = gpd.GeoDataFrame(
-        geometry=[merged_polygon],
-        crs=combined.crs
-    )
-    
-    return(int_catchment_count, merged_gdf)
-# ----------------------------
 
 
 # ----------------
@@ -1271,8 +1173,7 @@ def fn_prepare_input_layers_01(
 
     global_section_schema = {
         'datasource': [
-            'url_divides',
-            'url_flowpaths',
+            'url_huc12',          # path to local HUC-12 vector file
             'vrt_terrain',
             'url_roads',
             'url_precip_intensity_by_return_period',
@@ -1287,8 +1188,6 @@ def fn_prepare_input_layers_01(
             'depththresh',
             'max_Froude',
             'outflow_boundary_slope',
-            'perct_bottom_line',
-            'perct_top_line',
             'stream_threshold_sq_mi',
             'default_manning_runs'
         ],
@@ -1351,8 +1250,8 @@ def fn_prepare_input_layers_01(
     
     #print(dict_all_params)
     # --------------- Make folders absolute
+    # 'catchment' is now the 12-digit HUC-12 code (e.g. 120702050402)
     str_catchment = dict_all_params['catchment']
-    str_wb = 'wb-' + str_catchment[4:]
     
     str_out_root_folder = os.path.abspath(dict_all_params['out_root_folder'])
     str_out_folder = os.path.join(str_out_root_folder, str_catchment)
@@ -1385,13 +1284,6 @@ def fn_prepare_input_layers_01(
         for key, filename in dict_files.items()
     }
     
-    str_header_lateral  = fn_two_digit_string(1)
-    
-    dict_paths_lateral = {
-        key: fn_build_path(str_out_folder_streams, str_header_lateral, filename)
-        for key, filename in dict_files.items()
-    }
-    
     ##str_dem_clipped_lateral_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'dem_clipped_lateral_5070.tif'))
 
     str_polygon_filepath = os.path.abspath(os.path.join(str_out_folder_streams, 'watershed_ar_4326.geojson'))
@@ -1413,8 +1305,7 @@ def fn_prepare_input_layers_01(
     str_whitebox_path = "/opt/whitebox_tools/whitebox_tools"
     
     # --- Load polygon ---
-    str_url_divides = dict_all_params['url_divides']
-    str_url_flowpaths = dict_all_params['url_flowpaths']
+    str_url_huc12 = dict_all_params['url_huc12']
     str_vrt_terrain = dict_all_params['vrt_terrain']
     str_url_roads = dict_all_params['url_roads']
     int_terrain_buffer_m = int(dict_all_params['terrain_buffer_m'])
@@ -1432,25 +1323,16 @@ def fn_prepare_input_layers_01(
     
     if b_print_output:
         print('  -- STEP 1: Finding terrain')
-    polygon = fn_get_divide_gdf(str_url_divides, str_catchment)
+    # Single HUC-12 area-of-interest polygon (already EPSG:5070)
+    polygon = fn_get_huc12_gdf(str_url_huc12, str_catchment)
     if polygon.crs is None:
         polygon.set_crs("EPSG:5070", inplace=True)
-    
-    # determine lateral watersheds
-    int_catchment_count, gdf_lateral = fn_get_divides_lateral_gdf(str_wb,
-                                                                  polygon,
-                                                                  str_url_divides,
-                                                                  str_url_flowpaths,
-                                                                  dict_all_params)
-    
-    if gdf_lateral.crs is None:
-        gdf_lateral.set_crs("EPSG:5070", inplace=True)
     
     # --- Load raster DEM (created in EPSG:4326) ---
     str_dem_4326_filepath = fn_create_terrain_tif(
         str_catchment,
         str_out_folder_streams,
-        gdf_lateral,
+        polygon,
         str_vrt_terrain,
         int_terrain_buffer_m,
         b_print_output)
@@ -1472,8 +1354,8 @@ def fn_prepare_input_layers_01(
         resampling=resampling_method)
     
     # --- Ensure CRS match for clipping ---
-    if gdf_lateral.crs != dem_5070_downscaled.rio.crs:
-        gdf_lateral = gdf_lateral.to_crs(dem_5070_downscaled.rio.crs)
+    if polygon.crs != dem_5070_downscaled.rio.crs:
+        polygon = polygon.to_crs(dem_5070_downscaled.rio.crs)
         
     # --- Clip downscaled DEM ---
     dem_clipped_5070 = dem_5070_downscaled.rio.clip(
@@ -1483,15 +1365,6 @@ def fn_prepare_input_layers_01(
     
     # --- Save clipped, downscaled DEM ---
     dem_clipped_5070.rio.to_raster(dict_paths_base['dem_clipped'])
-    
-    # --- Clip downscaled lateral DEM ---
-    if int_catchment_count > 1:
-        dem_clipped_lateral_5070 = dem_5070_downscaled.rio.clip(
-            gdf_lateral.geometry.apply(mapping),
-            gdf_lateral.crs,
-            from_disk=True)
-    
-        dem_clipped_lateral_5070.rio.to_raster(dict_paths_lateral['dem_clipped'])
     
     # --- Save rectangular (bbox) downscaled DEM ---
     str_dem_bbox_filepath = os.path.join(
@@ -1507,23 +1380,13 @@ def fn_prepare_input_layers_01(
     if b_print_output:
         print('  -- STEP 3: Stream Conditioning')
     
-    # condition the base polygon (single catchment)
+    # condition the base polygon (single HUC-12 AOI)
     fn_condition_terrain(dict_paths_base, 
                          str_out_folder_streams,
                          str_whitebox_path,
                          flt_threshold,
                          polygon,
                          str_url_roads)
-        
-    
-    # condition the terrain with lateral watersheds
-    if int_catchment_count > 1:
-        fn_condition_terrain(dict_paths_lateral, 
-                             str_out_folder_streams,
-                             str_whitebox_path,
-                             flt_threshold,
-                             gdf_lateral,
-                             str_url_roads)
     
     # ..............
     if b_print_output:
@@ -1628,11 +1491,13 @@ def fn_prepare_input_layers_01(
     
     points_gdf_contrib.to_file(dict_paths_base['stream_points_acc'])
     
-    polygon.to_file(str_polygon_filepath, driver="GeoJSON")
+    # polygon is in EPSG:5070 here; reproject to 4326 for the _4326 outputs
+    polygon_4326 = polygon.to_crs("EPSG:4326")
+    polygon_4326.to_file(str_polygon_filepath, driver="GeoJSON")
     
     # create a shapefile of the basin in EPSG:4326
     str_polygon_shp_filepath = os.path.join(str_out_folder_streams, 'watershed_ar_4326.shp')
-    polygon.to_file(str_polygon_shp_filepath, driver="ESRI Shapefile")
+    polygon_4326.to_file(str_polygon_shp_filepath, driver="ESRI Shapefile")
     
     # ----------
     # create a summary geopackage
@@ -1657,7 +1522,7 @@ def fn_prepare_input_layers_01(
         if layer_name == "watershed":
             gdf['terrain_clip']=dict_paths_base['dem_clipped']
             gdf['terrain_source']=str_vrt_terrain
-            gdf['hydrofabric_source']=str_url_divides
+            gdf['huc12_source']=str_url_huc12
         gdf.to_file(str_gpkg_filepath, layer=layer_name, driver="GPKG")
         
    # Create a boundary condition from the terrain file
@@ -1665,11 +1530,7 @@ def fn_prepare_input_layers_01(
         print('  -- STEP 5: Outflow Boundary Slope')
     str_slope = dict_all_params['outflow_boundary_slope']
     
-    if int_catchment_count > 1:
-        # need to use entire terrain plus lateral watersheds
-        str_bci_path = fn_raster_edge_cells_to_bci(dict_paths_lateral['dem_burn_roads'], str_slope)
-    else:
-        str_bci_path = fn_raster_edge_cells_to_bci(dict_paths_base['dem_burn_roads'], str_slope)
+    str_bci_path = fn_raster_edge_cells_to_bci(dict_paths_base['dem_burn_roads'], str_slope)
     
     src = Path(str_bci_path)
     dst = src.parents[1] / "02_lisflood_input" / src.name
@@ -1679,11 +1540,8 @@ def fn_prepare_input_layers_01(
         print('  -- STEP 6: Prep terrain for LISFLOOD')
     # Convert the D4-fixed, road-burned GeoTIFF to ASC for use in LISFLOOD-FP
 
-    # Select the correct (D4-fixed) dem_burn_roads path
-    if int_catchment_count > 1:
-        str_dem_burn_roads_d4fixed = dict_paths_lateral['dem_burn_roads']
-    else:
-        str_dem_burn_roads_d4fixed = dict_paths_base['dem_burn_roads']
+    # Select the (D4-fixed) dem_burn_roads path
+    str_dem_burn_roads_d4fixed = dict_paths_base['dem_burn_roads']
 
     dem = rioxarray.open_rasterio(str_dem_burn_roads_d4fixed, masked=True)
     

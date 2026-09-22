@@ -4,6 +4,7 @@
 #
 # Created by: Andy Carter, PE
 # Created - 2026.02.07
+# Revised - 2026.05.08 -- adjusting Mannings n after the 'default_manning_runs' run
 # ************************************************************
 
 # ************************************************************
@@ -26,6 +27,8 @@ import warnings
 import threading
 import itertools
 import sys
+import numpy as np
+import rasterio
 # ************************************************************
 
 # -----------------
@@ -417,6 +420,75 @@ def fn_str_to_bool(value):
 # ----------------
 
 
+
+# ----------------------
+def fn_create_modified_mannings(
+    str_lisflood_folder,
+    str_run_name_nth,
+    str_mannings_asc,
+    flt_fpfric,
+    flt_depth_thresh=0.001):
+    """
+    After the Nth default-Manning run completes, read that run's depth
+    output (.wd), identify wet cells (depth > flt_depth_thresh), and
+    overwrite those cells in the Manning's n ASC with flt_fpfric.
+
+    Saves the modified raster as 'manningsn_modified.asc' in
+    str_lisflood_folder and returns the filename.
+
+    Parameters
+    ----------
+    str_lisflood_folder : str   - path to 02_lisflood_input folder
+    str_run_name_nth    : str   - dirroot value of the Nth run (e.g. 'cat-2420542_5p9mm')
+    str_mannings_asc    : str   - filename of the original Manning's n ASC
+    flt_fpfric          : float - uniform Manning's n value to assign to wet cells
+    flt_depth_thresh    : float - minimum depth (m) to consider a cell wet
+    """
+    # --- Locate the depth output file from the Nth run ---
+    str_wd_filename = str_run_name_nth + "-0001.wd"
+    str_wd_path = os.path.join(str_lisflood_folder, str_run_name_nth, str_wd_filename)
+
+    if not os.path.isfile(str_wd_path):
+        raise FileNotFoundError(
+            f"Depth output not found for Nth Manning run: {str_wd_path}")
+
+    str_mannings_path = os.path.join(str_lisflood_folder, str_mannings_asc)
+    str_modified_name = "manningsn_modified.asc"
+    str_modified_path = os.path.join(str_lisflood_folder, str_modified_name)
+
+    # --- Read depth raster ---
+    with rasterio.open(str_wd_path) as src_wd:
+        arr_depth  = src_wd.read(1)
+        wd_nodata  = src_wd.nodata
+        wd_profile = src_wd.profile
+
+    # --- Read Manning's n raster ---
+    with rasterio.open(str_mannings_path) as src_mn:
+        arr_mannings  = src_mn.read(1).astype(np.float32)
+        mn_nodata     = src_mn.nodata
+        mn_profile    = src_mn.profile
+
+    # --- Build wet mask ---
+    if wd_nodata is not None:
+        valid_depth = arr_depth != wd_nodata
+    else:
+        valid_depth = ~np.isnan(arr_depth)
+
+    wet_mask = valid_depth & (arr_depth > flt_depth_thresh)
+
+    # --- Overwrite wet cells with fpfric ---
+    arr_modified = arr_mannings.copy()
+    arr_modified[wet_mask] = flt_fpfric
+
+    # --- Write modified ASC ---
+    with rasterio.open(str_modified_path, 'w', **mn_profile) as dst:
+        dst.write(arr_modified, 1)
+
+    n_wet = int(wet_mask.sum())
+    return str_modified_name, n_wet
+# ----------------------
+
+
 # .........................................................
 def fn_run_lisflood_02(
     str_global_config_file_path,
@@ -450,6 +522,11 @@ def fn_run_lisflood_02(
     global_config.read(str_global_config_file_path)
 
     global_section_schema = {
+        'lisflood_settings': [
+            'fpfric',
+            'default_manning_runs',
+            'depththresh',
+        ],
         'stable_run_paramters': [
             'window',
             'min_Qout_ratio',
@@ -581,51 +658,115 @@ def fn_run_lisflood_02(
     # This will likely be a return of 'no_match' and will require the addition of a startfile
     # Other than 'ok' or 'not_found' for str_stable_row_status is not good
     
+    # Manning's roughness transition settings
+    int_default_manning_runs = int(dict_all_params['default_manning_runs'])
+    flt_fpfric               = float(dict_all_params['fpfric'])
+    flt_depththresh          = float(dict_all_params['depththresh'])
+
+    # Original Manning's ASC filename (written by prepare_input_layers_01)
+    # Always named from the lateral (01_) or base (00_) dem_burn_roads stem
+    # We derive it from the first .par file that has a manningfile entry
+    str_mannings_asc_original = None
+    str_mannings_modified     = None
+    b_mannings_modified       = False
+
     for index, row in df_parameter_files.iterrows():
         if index >= int_process_row_index:
-    
+
             str_run = int(index + 2)
             str_run_label = f"{str_run} of {str_num_runs}: "
-            
-            #print(row['parameter_file'][:-4])
-    
+
             str_stable_row_status, ps_first_stable_row = fn_get_stable_row(
                 row['mass_balance_filepath'],
                 row['expected_outflow'],
                 dict_all_params
             )
-    
-            #print(str_stable_row_status)
-    
+
             if str_stable_row_status != 'ok':
-                # something went wrong with this steps run
-                #print(str_stable_row_status)
                 print(f"     -- Stable Run not found: {row['parameter_file'][:-4]} Status: {str_stable_row_status}")
                 break
             else:
-                # the current run was stable... prepare the next run without the introduction of a startfile
-                # revise the next row's parameter file
-    
+                # -------------------------------------------------------
+                # Manning's transition: after the Nth default-Manning run,
+                # build the modified roughness file and patch remaining .par
+                # -------------------------------------------------------
+                # index is 0-based within the loop; run 1 (first run) was
+                # run outside this loop, so index==0 here is run 2.
+                # The Nth run (1-based total) = index (int_default_manning_runs - 1).
+                if (not b_mannings_modified
+                        and index == int_default_manning_runs - 1):
+
+                    # Find the original manningfile name from a post-Nth .par
+                    next_check = fn_get_next_intensity_row(df_parameter_files, row['intensity'])
+                    if next_check is not None:
+                        df_check = pd.read_csv(
+                            next_check['filepath'],
+                            sep=r"\s+", header=None, comment="#"
+                        )
+                        dict_check = dict(zip(df_check[0], df_check[1]))
+                        str_mannings_asc_original = dict_check.get('manningfile', None)
+
+                    if str_mannings_asc_original is not None:
+                        # dirroot of the current (Nth) run is the run_name
+                        df_nth = pd.read_csv(
+                            row['filepath'],
+                            sep=r"\s+", header=None, comment="#"
+                        )
+                        str_nth_dirroot = dict(zip(df_nth[0], df_nth[1])).get('dirroot', '')
+
+                        if b_print_output:
+                            print(f"  -- Manning\'s transition: modifying {str_mannings_asc_original} "
+                                  f"using wet cells from run '{str_nth_dirroot}'")
+
+                        str_mannings_modified, n_wet = fn_create_modified_mannings(
+                            str_lisflood_folder  = str_lisflood_folder,
+                            str_run_name_nth     = str_nth_dirroot,
+                            str_mannings_asc     = str_mannings_asc_original,
+                            flt_fpfric           = flt_fpfric,
+                            flt_depth_thresh     = flt_depththresh
+                        )
+
+                        if b_print_output:
+                            print(f"     {n_wet} wet cells set to fpfric={flt_fpfric}")
+                            print(f"     Modified Manning\'s written: {str_mannings_modified}")
+
+                        # Patch all remaining .par files to use the modified ASC
+                        int_allign = 24
+                        for patch_idx, patch_row in df_parameter_files.iterrows():
+                            if patch_idx > int_default_manning_runs - 1:
+                                df_patch = pd.read_csv(
+                                    patch_row['filepath'],
+                                    sep=r"\s+", header=None, comment="#"
+                                )
+                                dict_patch = dict(zip(df_patch[0], df_patch[1]))
+                                if 'manningfile' in dict_patch:
+                                    dict_patch['manningfile'] = str_mannings_modified
+                                    with open(patch_row['filepath'], 'w') as f:
+                                        for key, value in dict_patch.items():
+                                            if value is None or (isinstance(value, float) and math.isnan(value)):
+                                                f.write(f"{key:<{int_allign}}\n")
+                                            else:
+                                                f.write(f"{key:<{int_allign}}{value}\n")
+
+                        b_mannings_modified = True
+
                 # next parameter file in sequence
                 next_row = fn_get_next_intensity_row(df_parameter_files, row['intensity'])
-    
-                ##need row, next_row and ps_first_stable_row
+
                 str_par_file_to_run = fn_prep_next_paramter_file(row,
                                                                  next_row,
                                                                  ps_first_stable_row,
                                                                  str_lisflood_folder,
                                                                  b_use_startfile)
-    
-                if str_par_file_to_run is not None:
-                    # run the Docker container of lisflood-fp
 
+                if str_par_file_to_run is not None:
                     flt_loop_time = fn_run_with_spinner(
                         fn_run_docker_lisflood,
                         str_lisflood_folder,
                         str_par_file_to_run,
                         message=f"     -- {str_run_label} Running {next_row['parameter_file'][:-4]} LISFLOOD"
                     )
-                    
+
                     print(
                         f"     -- {str_run_label} Run {next_row['parameter_file'][:-4]} "
                         f"completed in {round(flt_loop_time)} seconds"
