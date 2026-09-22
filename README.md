@@ -1,5 +1,5 @@
 # Lisflood2FIM <img src="doc/Logo_CWE.png" align="right" alt="lisflood2fim agency" height="80"> <br> <br>
-## <i>Lisflood2FIM - Flood Inundation Mapping using LISFLOOD-FP</i>
+## <i>Lisflood2FIM - HUC-12 version -- Flood Inundation Mapping using LISFLOOD-FP</i>
 
 <img src="/doc/lisflood2fim-logo-20260209.png" align="right"
      alt="lisflood2fim logo" width="160" height="160">
@@ -13,7 +13,7 @@ These scripts were developed in support of the National Weather Service (Researc
 </p>
 
   - **Technology stack**: Scripts were all developed in Python 3.11<br>
-  - **Status**:  Version 0.1- Preliminary release. (2026.02.09)<br>
+  - **Status**:  Version 0.2- Variant for HUC-12 only. (2026.09.22)<br>
   - **Related Projects**: Flood Inundation Maps from HEC-RAS 2D models  https://github.com/andycarter-pe/ras2fim-2d<br>
   
 ## Dockerfile
