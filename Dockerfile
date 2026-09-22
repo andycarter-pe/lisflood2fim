@@ -106,7 +106,7 @@ RUN /opt/miniconda/bin/conda init bash
 SHELL ["/bin/bash", "-c"]
 
 # Clone lisflood2fim repository
-RUN git clone -b huc_12 --single-branch https://github.com/andycarter-pe/lisflood2fim.git /app/lisflood2fim
+RUN git clone -b huc_12 --single-branch --depth 1 https://github.com/andycarter-pe/lisflood2fim.git /app/lisflood2fim
 
 WORKDIR /app/lisflood2fim/src
 
