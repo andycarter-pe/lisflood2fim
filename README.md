@@ -19,18 +19,18 @@ These scripts were developed in support of the National Weather Service (Researc
 ## Dockerfile
 To build a container from this repository, clone to your local drive and build with the following command
 ```
-docker build -t lisflood2fim .
+docker build -t lisflood2fim_huc12 .
 ```
 
 ## Docker Container
 For convience, a container has been pre-built and pushed to DockerHub.  To pull this container to your machine...
 ```
-docker pull civileng127/lisflood2fim:20260424
+docker pull civileng127/lisflood2fim_huc12:20260922
 ```
-Run the containers demo: Note '/mnt/e/lisflood_dump' is the local directory where output will be saved
+Run the container: Note '/mnt/e/Kerr_HUC_12_lisflood2fim' is the local directory where output will be saved
 ```
 docker run -it \
--v /mnt/e/lisflood_dump:/mnt \
-civileng127/lisflood2fim:20260424 \
-bash -c "source /opt/miniconda/etc/profile.d/conda.sh && conda activate geo && cd /mnt && python /app/lisflood2fim/src/lisflood2fim_00.py"
+-v /mnt/e/Kerr_HUC_12_lisflood2fim:/mnt \
+civileng127/lisflood2fim_huc12:20260922 \
+bash -c "source /opt/miniconda/etc/profile.d/conda.sh && conda activate geo && cd /mnt && python /app/lisflood2fim/src/lisflood2fim_huc12_00.py -g /mnt/global_web_huc12_config.ini -c /mnt/local_config.ini"
 ```
