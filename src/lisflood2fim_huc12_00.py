@@ -7,6 +7,8 @@
 # Revised - 2026.03.04 -- WhiteboxTool Issues on TACC
 # Revised - 2026.04.19 -- To run a HUC-12 simulation
 # Revised - 2026.09.22 -- HUC-12 configuration
+# Revised - 2026.10.21 -- stability check uses rain applied (from .mass) as expected
+#                         outflow; startfile retry fixed; low-intensity fallback
 # ************************************************************
 
 
@@ -20,7 +22,7 @@ import warnings
 
 # Import modules
 from prepare_input_layers_huc12_01 import fn_prepare_input_layers_01
-from run_lisflood_02 import fn_run_lisflood_02
+from run_lisflood_02_v2 import fn_run_lisflood_02
 from build_netcdf_03 import fn_build_netcdf_03
 from heal_netcdf_04 import fn_heal_netcdf_04
 # ************************************************************
