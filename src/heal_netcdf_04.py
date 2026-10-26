@@ -63,19 +63,14 @@ def fn_str_to_bool(value):
 # ...................................
 def fn_dem_difference(clipped_path, burned_path, out_diff, tolerance, b_print_verbose):
 
-    if b_print_verbose:
-        print(f"Clipped DEM : {clipped_path}")
-        print(f"Burned DEM  : {burned_path}")
-        print(f"Tolerance   : {tolerance}")
-
     da_c = rxr.open_rasterio(clipped_path, masked=True).squeeze()
     da_b = rxr.open_rasterio(burned_path,  masked=True).squeeze()
 
     # ── Sanity checks ─────────────────────────────────────────────────────────
     if da_c.rio.crs != da_b.rio.crs:
-        print(f"WARNING: CRS mismatch!\n  clipped={da_c.rio.crs}\n  burned={da_b.rio.crs}")
+        print(f"     -- WARNING: CRS mismatch: clipped={da_c.rio.crs} burned={da_b.rio.crs}")
     if da_c.rio.transform() != da_b.rio.transform():
-        print("WARNING: Transform mismatch — grids may not align perfectly.")
+        print("     -- WARNING: Transform mismatch; grids may not align perfectly")
     if da_c.shape != da_b.shape:
         raise ValueError(
             f"Shape mismatch: clipped={da_c.shape}, burned={da_b.shape}. "
@@ -89,26 +84,15 @@ def fn_dem_difference(clipped_path, burned_path, out_diff, tolerance, b_print_ve
     valid = diff.values[~np.isnan(diff.values)]
     n_total = valid.size
     n_diff  = int(np.sum(np.abs(valid) > tolerance))
-    n_same  = n_total - n_diff
 
     if b_print_verbose:
-        print(f"\nValid cells : {n_total:,}")
-        print(f"  Different : {n_diff:,}  ({100 * n_diff / n_total:.2f} %)")
-        print(f"  Identical : {n_same:,}  ({100 * n_same / n_total:.2f} %)")
-        if n_total > 0:
-            print(f"  Min diff  : {valid.min():.4f} m")
-            print(f"  Max diff  : {valid.max():.4f} m")
-            print(f"  Mean diff : {valid.mean():.4f} m")
-            print(f"  Std diff  : {valid.std():.4f} m")
+        flt_pct = 100 * n_diff / n_total if n_total > 0 else 0.0
+        print(f"     -- {n_diff:,} of {n_total:,} terrain cells modified by burning ({flt_pct:.2f} %)")
 
     # ── Write difference raster ───────────────────────────────────────────────
     diff = diff.astype(np.float32)
     diff.rio.write_nodata(-9999.0, inplace=True)
     diff.rio.to_raster(out_diff)
-
-    if b_print_verbose:
-        print(f"\nDifference raster → {out_diff}")
-        print("Done.")
 # ...................................
 
 
@@ -122,7 +106,7 @@ def fn_load_diff_raster(str_diff_path: str, int_target_rows: int, int_target_col
 
     if da_diff.shape != (int_target_rows, int_target_cols):
         if b_print_output:
-            print(f"  Resampling diff raster: {da_diff.shape} → ({int_target_rows},{int_target_cols})")
+            print(f"     -- Resampling diff raster {da_diff.shape} to ({int_target_rows}, {int_target_cols})")
         da_diff = da_diff.rio.reproject(
             da_diff.rio.crs,
             shape=(int_target_rows, int_target_cols),
@@ -137,15 +121,7 @@ def fn_load_diff_raster(str_diff_path: str, int_target_rows: int, int_target_col
 # ................................
 def fn_apply_dem_correction(str_nc_in, str_diff, str_nc_out, b_print_output) -> None:
 
-    if b_print_output:
-        print(f"Input netCDF  : {str_nc_in}")
-        print(f"Diff raster   : {str_diff}")
-        print(f"Output netCDF : {str_nc_out}")
-
     shutil.copy2(str_nc_in, str_nc_out)
-    
-    if b_print_output:
-        print("\nCopied source netCDF → output.")
 
     with nc.Dataset(str_nc_out, "r+") as ds:
 
@@ -153,17 +129,10 @@ def fn_apply_dem_correction(str_nc_in, str_diff, str_nc_out, b_print_output) -> 
         int_n_bands    = ds.variables["depth"].shape[0]  # (intensity, y, x)
 
         # ── Load and align difference raster ─────────────────────────────────
-        if b_print_output:
-            print(f"Loading diff raster ({int_ny} rows × {int_nx} cols)...")
         arr_diff       = fn_load_diff_raster(str_diff, int_ny, int_nx, b_print_output)
         bool_diff_valid = ~np.isnan(arr_diff)
-        
-        if b_print_output:
-            print(f"  Diff valid cells : {bool_diff_valid.sum():,} / {arr_diff.size:,}")
 
         # ── 1. Terrain: terrain += difference ────────────────────────────────
-        if b_print_output:
-            print("\nCorrecting terrain layer...")
         var_terrain     = ds.variables["terrain"]
         arr_terrain     = var_terrain[:].astype(np.float64)
 
@@ -175,11 +144,7 @@ def fn_apply_dem_correction(str_nc_in, str_diff, str_nc_out, b_print_output) -> 
         arr_terrain[bool_terrain_nd] = flt_terrain_nd
         var_terrain[:] = arr_terrain.astype(np.float32)
 
-        if b_print_output:
-            print(f"  Terrain cells updated : {bool_apply.sum():,}")
-    
-            # ── 2. Depth bands: depth -= difference; clip negatives to NoData ────
-            print(f"\nCorrecting {int_n_bands} depth bands...")
+        # ── 2. Depth bands: depth -= difference; clip negatives to NoData ────
         var_depth = ds.variables["depth"]
 
         int_total_corrected = 0
@@ -201,17 +166,9 @@ def fn_apply_dem_correction(str_nc_in, str_diff, str_nc_out, b_print_output) -> 
 
             var_depth[int_band, :, :] = arr_band.astype(np.float32)
 
-            if b_print_output:
-                print(f"  Band {int_band+1:>2}/{int_n_bands}  "
-                      f"corrected={bool_apply_band.sum():,}  "
-                      f"clipped_to_nodata={bool_neg.sum():,}")
-                
         if b_print_output:
-            print("\nSummary:")
-            print(f"  Total depth cells corrected    : {int_total_corrected:,}")
-            print(f"  Total depth cells → NoData (<0): {int_total_clipped:,}")
-            print(f"\nOutput written → {str_nc_out}")
-            print("Done.")
+            print(f"     -- {int_total_corrected:,} depth cells corrected, "
+                  f"{int_total_clipped:,} went dry")
 # ................................
 
 
@@ -221,18 +178,10 @@ def fn_mask_shallow_depth(input_path: str, output_path: str, threshold_inches: f
     INCHES_TO_METERS = 0.0254          # 1 inch = 0.0254 m
     
     threshold_m = threshold_inches * INCHES_TO_METERS
-    
-    if b_print_output:
-        print(f"Threshold : {threshold_inches} inches = {threshold_m:.4f} m")
-        print(f"Input     : {input_path}")
-        print(f"Output    : {output_path}")
 
     # Copy the whole file first so all metadata, CRS, and other variables
     # are preserved exactly — then we only touch the 'depth' variable.
     shutil.copy2(input_path, output_path)
-    
-    if b_print_output:
-        print("Copied source file → output (preserving all metadata).")
 
     with nc.Dataset(output_path, "r+") as ds:
         depth_var = ds.variables["depth"]          # shape: (intensity, y, x)
@@ -248,7 +197,7 @@ def fn_mask_shallow_depth(input_path: str, output_path: str, threshold_inches: f
         n_total  = int(data.size)
         
         if b_print_output:
-            print(f"Pixels below {threshold_inches}″: {n_masked:,} / {n_total:,} "
+            print(f"     -- {n_masked:,} pixels shallower than {threshold_inches} in removed "
                   f"({100 * n_masked / n_total:.2f} %)")
 
         # Apply: set shallow pixels to NaN (the variable's _FillValue)
@@ -256,9 +205,6 @@ def fn_mask_shallow_depth(input_path: str, output_path: str, threshold_inches: f
 
         # Write back — netCDF4-python respects the existing _FillValue
         depth_var[:] = data
-        
-    if b_print_output:
-        print("Done. Shallow depth pixels set to NaN (no data).")
 # --------------------------------------
 
 
@@ -313,15 +259,7 @@ def fn_denoise_band(arr_band, int_min_pixels):
 def fn_denoise_depth_layers(str_nc_in, str_nc_out, int_min_pixels, b_print_output):
     # type: (str, str, int) -> None
 
-    if b_print_output:
-        print("Input netCDF    : {}".format(str_nc_in))
-        print("Output netCDF   : {}".format(str_nc_out))
-        print("Min pixels keep : {}".format(int_min_pixels))
-
     shutil.copy2(str_nc_in, str_nc_out)
-    
-    if b_print_output:
-        print("\nCopied source netCDF -> output.")
 
     with nc.Dataset(str_nc_out, "r+") as ds:
         var_depth   = ds.variables["depth"]          # (intensity, y, x)
@@ -340,16 +278,9 @@ def fn_denoise_depth_layers(str_nc_in, str_nc_out, int_min_pixels, b_print_outpu
             int_total_components_removed += int_n_removed
             int_total_pixels_removed     += int_px_removed
 
-            if b_print_output:
-                print("  Band {:>2}/{}  components_removed={:,}  pixels_removed={:,}".format(
-                    int_band + 1, int_n_bands, int_n_removed, int_px_removed))
-
     if b_print_output:
-        print("\nSummary:")
-        print("  Total components removed : {:,}".format(int_total_components_removed))
-        print("  Total pixels -> NoData   : {:,}".format(int_total_pixels_removed))
-        print("\nOutput written -> {}".format(str_nc_out))
-        print("Done.")
+        print("     -- {:,} clusters smaller than {} pixels removed ({:,} pixels)".format(
+            int_total_components_removed, int_min_pixels, int_total_pixels_removed))
 # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 
@@ -466,12 +397,17 @@ def fn_heal_netcdf_04(
     str_outfolder = os.path.join(str_out_root_folder, str_catchment, "04_healed_depth_nc")
     os.makedirs(str_outfolder, exist_ok=True)
     
-    str_healed_netcdf_filepath = os.path.join(str_outfolder, str_burned_netcdf_filename)
+    # Intermediate files go to an interim subfolder; the final denoised
+    # netCDF keeps the depth_<huc>.nc name in 04_healed_depth_nc
+    str_interim_folder = os.path.join(str_outfolder, "interim")
+    os.makedirs(str_interim_folder, exist_ok=True)
+
+    str_healed_netcdf_filepath = os.path.join(str_interim_folder, 'depth_' + str_catchment + "_raw.nc")
     
     
     # --------------------------------------------------
     if b_print_output:
-        print('  -- STEP 1: Determing burned terrain cells')
+        print('  -- STEP 1: Determining burned terrain cells')
 
     fn_dem_difference(str_clipped_dem_filepath, str_burned_dem_filepath, 
                       str_ouput_diff_filepath, flt_depth_diff_tolerance, b_print_output)
@@ -490,7 +426,7 @@ def fn_heal_netcdf_04(
     if b_print_output:
         print('  -- STEP 3: Removing shallow depth pixels')
     
-    str_shallow_remove_netcdf_filepath = str_healed_netcdf_filepath[:-3] + "_shallow_removed.nc"
+    str_shallow_remove_netcdf_filepath = os.path.join(str_interim_folder, 'depth_' + str_catchment + "_shallow_removed.nc")
     
     fn_mask_shallow_depth(str_healed_netcdf_filepath, str_shallow_remove_netcdf_filepath, 
                           FLT_THRESHOLD_INCHES, b_print_output)
@@ -498,13 +434,13 @@ def fn_heal_netcdf_04(
     
     # --------------------------------------------------
     if b_print_output:
-        print('  -- STEP 4: Removing noisey disconected pixels')
+        print('  -- STEP 4: Removing noisy disconnected pixels')
     
     # **** Note hardcoded max pixel cluster removal ****
     INT_MIN_PIXELS = 15 #size of D8 disconnected cluster to removal
     
 
-    str_denoised_netcdf_filepath = str_healed_netcdf_filepath[:-3] + "_denoised.nc"
+    str_denoised_netcdf_filepath = os.path.join(str_outfolder, str_burned_netcdf_filename)
     
     fn_denoise_depth_layers(str_shallow_remove_netcdf_filepath, str_denoised_netcdf_filepath,
                             INT_MIN_PIXELS, b_print_output)

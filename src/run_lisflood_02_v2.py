@@ -7,6 +7,9 @@
 # Revised - 2026.05.08 -- adjusting Mannings n after the 'default_manning_runs' run
 # Revised - 2026.10.21 -- stability check uses rain applied (from .mass) as expected
 #                          outflow; startfile retry fixed; low-intensity fallback
+# Revised - 2026.10.24 -- run time limits from the [lisflood_timeouts] section of
+#                          the global config: cap on sim_time, wall-clock budget
+#                          per run, hard kill timeout, startfile retry mode
 # ************************************************************
 
 # ************************************************************
@@ -39,7 +42,10 @@ def fn_run_with_spinner(func, *args, message="Running"):
     result = {}
 
     def wrapper():
-        result["value"] = func(*args)
+        try:
+            result["value"] = func(*args)
+        except BaseException as e:
+            result["error"] = e
 
     thread = threading.Thread(target=wrapper)
     thread.start()
@@ -51,6 +57,10 @@ def fn_run_with_spinner(func, *args, message="Running"):
 
     thread.join()
     sys.stdout.write("\r" + " " * 50 + "\r")  # clear line
+
+    # re-raise anything the worker thread hit (e.g. a LISFLOOD timeout)
+    if "error" in result:
+        raise result["error"]
     return result.get("value")
 # -----------------
 
@@ -175,11 +185,13 @@ def fn_get_stable_row(str_mass_balance_filepath, flt_expected_outflow, dict_all_
 
 
 # -----------------
-def fn_run_par_file(str_lisflood_folder, str_par_file_to_run, str_run_label, str_message):
+def fn_run_par_file(str_lisflood_folder, str_par_file_to_run, str_run_label, str_message,
+                    flt_timeout_sec=None):
     flt_loop_time = fn_run_with_spinner(
         fn_run_docker_lisflood,
         str_lisflood_folder,
         str_par_file_to_run,
+        flt_timeout_sec,
         message=f"     -- {str_run_label} {str_message} LISFLOOD"
     )
 
@@ -187,6 +199,7 @@ def fn_run_par_file(str_lisflood_folder, str_par_file_to_run, str_run_label, str
         f"     -- {str_run_label} Run {str_par_file_to_run[:-4]} "
         f"completed in {flt_loop_time} seconds"
     )
+    return flt_loop_time
 # -----------------
 
 
@@ -275,7 +288,14 @@ def fn_prep_next_par_file(next_row,
 
 
 # --------------------
-def fn_run_docker_lisflood(str_lisflood_folder, str_par_file_to_run):
+class LisfloodTimeout(Exception):
+    """LISFLOOD was killed for passing the hard wall-clock timeout."""
+    pass
+# --------------------
+
+
+# --------------------
+def fn_run_docker_lisflood(str_lisflood_folder, str_par_file_to_run, flt_timeout_sec=None):
     
     '''
     str_docker_string = "lisflood-fp:augmented"
@@ -295,12 +315,20 @@ def fn_run_docker_lisflood(str_lisflood_folder, str_par_file_to_run):
         "lisflood", str_par_file_to_run,
     ]
 
-    result = subprocess.run(
-        cmd,
-        check=True,
-        capture_output=True,
-        text=True,
-    )
+    # flt_timeout_sec of None or 0 = no limit.  On a timeout subprocess.run
+    # kills LISFLOOD; no depth grid (.wd) is written for that run.
+    flt_start = time.time()
+    try:
+        result = subprocess.run(
+            cmd,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=flt_timeout_sec if flt_timeout_sec else None,
+        )
+    except subprocess.TimeoutExpired:
+        raise LisfloodTimeout(
+            f"{str_par_file_to_run[:-4]} killed after {flt_timeout_sec / 60:.0f} minutes")
     
     stdout = result.stdout  # or paste the string here
 
@@ -308,7 +336,8 @@ def fn_run_docker_lisflood(str_lisflood_folder, str_par_file_to_run):
     if match:
         flt_loop_time = round(float(match.group(1)))
     else:
-        flt_loop_time = None
+        # fall back to the measured wall-clock time
+        flt_loop_time = round(time.time() - flt_start)
 
     return(flt_loop_time)
 # --------------------
@@ -353,16 +382,22 @@ def fn_prep_next_paramter_file(row,
                                next_row,
                                ps_first_stable_row,
                                str_lisflood_folder,
-                               b_use_startfile):
+                               b_use_startfile,
+                               int_buffer_sec=5400,
+                               int_max_sim_time_sec=None):
 
     flt_time_to_stable = ps_first_stable_row['Time']
     # Round flt_time_to_stable to nearest integer
     int_time_to_stable = int(flt_time_to_stable // 1 )
     
-    # addiing an additional hour
-    # TODO -- 2026.01.31 -- a buffer for stabilization
-    # Revised to longer -- 2026.03.06
-    int_time_to_stable += 5400 # adding and additional 1.5 hours (this is in seconds)
+    # buffer for stabilization (was a hard coded 5400 s / 1.5 hours)
+    # Revised 2026.10.24 -- from [lisflood_timeouts] stable_buffer_hr
+    int_time_to_stable += int_buffer_sec
+
+    # cap the sim_time; without this an unstable run (which falls back to its
+    # last row) makes every later run 1.5 hours longer than the one before
+    if int_max_sim_time_sec:
+        int_time_to_stable = min(int_time_to_stable, int(int_max_sim_time_sec))
 
     df_par = pd.read_csv(
         row['filepath'],
@@ -430,6 +465,31 @@ def fn_prep_next_paramter_file(row,
         #print("No higher intensity available")
         return None
 # --------------------------
+
+# --------------------------
+def fn_get_par_sim_time(str_par_filepath):
+    df_par = pd.read_csv(str_par_filepath, sep=r"\s+", header=None, comment="#")
+    return float(dict(zip(df_par[0], df_par[1]))['sim_time'])
+# --------------------------
+
+
+# --------------------------
+def fn_set_par_sim_time(str_par_filepath, int_sim_time):
+    # set sim_time and saveint (output only at the end of the run)
+    df_par = pd.read_csv(str_par_filepath, sep=r"\s+", header=None, comment="#")
+    dict_parameters = dict(zip(df_par[0], df_par[1]))
+    dict_parameters['sim_time'] = str(int(int_sim_time))
+    dict_parameters['saveint'] = f"{float(int(int_sim_time))}"
+
+    int_allign = 24 # character spacing
+    with open(str_par_filepath, "w") as f:
+        for key, value in dict_parameters.items():
+            if value is None or (isinstance(value, float) and math.isnan(value)):
+                f.write(f"{key:<{int_allign}}\n")
+            else:
+                f.write(f"{key:<{int_allign}}{value}\n")
+# --------------------------
+
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 def is_valid_file(parser, arg):
@@ -614,6 +674,23 @@ def fn_run_lisflood_02(
         **dict_local_params
     }
 
+    # ---- run time limits (optional section; defaults keep the old behavior) ----
+    # Added 2026.10.24
+    flt_max_sim_time_hr   = global_config.getfloat('lisflood_timeouts', 'max_sim_time_hr', fallback=0.0)
+    flt_min_sim_time_hr   = global_config.getfloat('lisflood_timeouts', 'min_sim_time_hr', fallback=0.0)
+    flt_stable_buffer_hr  = global_config.getfloat('lisflood_timeouts', 'stable_buffer_hr', fallback=1.5)
+    flt_max_run_wall_min  = global_config.getfloat('lisflood_timeouts', 'max_run_wall_min', fallback=0.0)
+    flt_hard_timeout_min  = global_config.getfloat('lisflood_timeouts', 'hard_timeout_min', fallback=0.0)
+    str_startfile_mode    = global_config.get('lisflood_timeouts', 'startfile_mode', fallback='retry').strip().lower()
+
+    if str_startfile_mode not in ('retry', 'always', 'never'):
+        raise ValueError(f"[lisflood_timeouts] startfile_mode must be retry, always or never; got '{str_startfile_mode}'")
+
+    int_max_sim_time_sec = int(flt_max_sim_time_hr * 3600)   # 0 = no cap
+    int_min_sim_time_sec = int(flt_min_sim_time_hr * 3600)
+    int_buffer_sec       = int(flt_stable_buffer_hr * 3600)
+    flt_hard_timeout_sec = flt_hard_timeout_min * 60          # 0 = no limit
+
 
     # *************
     # For testing and recomputing
@@ -662,20 +739,38 @@ def fn_run_lisflood_02(
         # Run the first model to the full time duration
         str_par_file_to_run = os.path.basename(df_parameter_files.iloc[0]['filepath'])
 
-        flt_loop_time = fn_run_with_spinner(
-            fn_run_docker_lisflood,
-            str_lisflood_folder,
-            str_par_file_to_run,
-            message=f"     -- {str_run_label} Running Initial LISFLOOD"
-        )
+        # cap the first run's sim_time too
+        flt_first_sim_time = fn_get_par_sim_time(str_par_file_to_run)
+        if int_max_sim_time_sec and flt_first_sim_time > int_max_sim_time_sec:
+            fn_set_par_sim_time(str_par_file_to_run, int_max_sim_time_sec)
+            flt_first_sim_time = int_max_sim_time_sec
+
+        try:
+            flt_loop_time = fn_run_with_spinner(
+                fn_run_docker_lisflood,
+                str_lisflood_folder,
+                str_par_file_to_run,
+                flt_hard_timeout_sec,
+                message=f"     -- {str_run_label} Running Initial LISFLOOD"
+            )
+        except LisfloodTimeout as e:
+            print(f"     -- HARD TIMEOUT: {e}; no runs completed")
+            os.chdir(str_original_cwd)
+            return
         
         print(
                         f"     -- {str_run_label} Run {str_par_file_to_run [:-4]} "
                         f"completed in {round(flt_loop_time)} seconds")
+
+        # model seconds per wall-clock second, used for the wall-clock budget
+        flt_sim_speed = flt_first_sim_time / max(flt_loop_time, 1)
+    else:
+        flt_sim_speed = None
     
     
     
-    b_use_startfile = False
+    # 'always' starts every run after the first from the previous run's depths
+    b_use_startfile = (str_startfile_mode == 'always')
 
     # compute addtional cols in dataframe
     df_parameter_files[
@@ -698,6 +793,10 @@ def fn_run_lisflood_02(
     #   3. still not  -> for the first 'num_unchecked_runs' runs, accept the
     #                    last row of the mass file (logged as a warning) and keep
     #                    going; otherwise stop.
+    # Each run's sim_time is the stable time + stable_buffer_hr, capped at
+    # max_sim_time_hr and at what fits in max_run_wall_min (from the speed of
+    # the last run), but not below min_sim_time_hr.  A run that passes
+    # hard_timeout_min is killed and the series stops there.
 
     # Manning's roughness transition settings
     int_default_manning_runs = int(dict_all_params['default_manning_runs'])
@@ -714,6 +813,33 @@ def fn_run_lisflood_02(
     row_prev = None
     ps_prev_stable_row = None
     list_fallback_runs = []
+    list_capped_runs = []
+
+    # -----
+    def fn_sim_time_cap():
+        # tightest of max_sim_time_hr and the wall-clock budget; None = no cap
+        list_caps = []
+        if int_max_sim_time_sec:
+            list_caps.append(int_max_sim_time_sec)
+        if flt_max_run_wall_min and flt_sim_speed:
+            # 0.9 = margin, as runs slow down as more cells get wet
+            list_caps.append(int(flt_sim_speed * flt_max_run_wall_min * 60 * 0.9))
+        if not list_caps:
+            return None
+        return max(min(list_caps), int_min_sim_time_sec)
+    # -----
+
+    # -----
+    def fn_run_capped(str_par_file, str_label, str_message, int_cap):
+        # run one .par file; update the speed estimate; note capped runs
+        nonlocal flt_sim_speed
+        flt_sim_time = fn_get_par_sim_time(str_par_file)
+        if int_cap is not None and flt_sim_time >= int_cap:
+            list_capped_runs.append(str_par_file[:-4])
+        flt_loop = fn_run_par_file(str_lisflood_folder, str_par_file, str_label,
+                                   str_message, flt_hard_timeout_sec)
+        flt_sim_speed = flt_sim_time / max(flt_loop, 1)
+    # -----
 
     for index, row in df_parameter_files.iterrows():
         if index < int_process_row_index:
@@ -730,6 +856,7 @@ def fn_run_lisflood_02(
 
         # --- retry this intensity with a startfile from the previous run ---
         if (str_stable_row_status != 'ok'
+                and str_startfile_mode == 'retry'
                 and not b_use_startfile
                 and row_prev is not None):
 
@@ -738,15 +865,25 @@ def fn_run_lisflood_02(
 
             b_use_startfile = True
 
+            int_cap = fn_sim_time_cap()
             str_par_file_to_run = fn_prep_next_paramter_file(row_prev,
                                                              row,
                                                              ps_prev_stable_row,
                                                              str_lisflood_folder,
-                                                             b_use_startfile)
+                                                             b_use_startfile,
+                                                             int_buffer_sec,
+                                                             int_cap)
 
-            fn_run_par_file(str_lisflood_folder, str_par_file_to_run,
-                            f"{int(index + 1)} of {str_num_runs}: ",
-                            f"Re-running {row['parameter_file'][:-4]} (startfile)")
+            try:
+                fn_run_capped(str_par_file_to_run,
+                              f"{int(index + 1)} of {str_num_runs}: ",
+                              f"Re-running {row['parameter_file'][:-4]} (startfile)",
+                              int_cap)
+            except LisfloodTimeout as e:
+                # the first attempt's depth grid is kept, but its .mass file
+                # was overwritten by the killed retry, so stop here
+                print(f"     -- HARD TIMEOUT: {e}; stopping the series here")
+                break
 
             str_stable_row_status, ps_first_stable_row = fn_get_stable_row(
                 row['mass_balance_filepath'],
@@ -793,7 +930,7 @@ def fn_run_lisflood_02(
                 str_nth_dirroot = dict(zip(df_nth[0], df_nth[1])).get('dirroot', '')
 
                 if b_print_output:
-                    print(f"  -- Manning\'s transition: modifying {str_mannings_asc_original} "
+                    print(f"       -- Manning\'s transition: modifying {str_mannings_asc_original} "
                           f"using wet cells from run '{str_nth_dirroot}'")
 
                 str_mannings_modified, n_wet = fn_create_modified_mannings(
@@ -805,8 +942,8 @@ def fn_run_lisflood_02(
                 )
 
                 if b_print_output:
-                    print(f"     {n_wet} wet cells set to fpfric={flt_fpfric}")
-                    print(f"     Modified Manning\'s written: {str_mannings_modified}")
+                    print(f"       -- {n_wet} wet cells set to fpfric={flt_fpfric}")
+                    print(f"       -- Modified Manning\'s written: {str_mannings_modified}")
 
                 # Patch all remaining .par files to use the modified ASC
                 int_allign = 24
@@ -831,21 +968,32 @@ def fn_run_lisflood_02(
         # next parameter file in sequence
         next_row = fn_get_next_intensity_row(df_parameter_files, row['intensity'])
 
+        int_cap = fn_sim_time_cap()
         str_par_file_to_run = fn_prep_next_paramter_file(row,
                                                          next_row,
                                                          ps_first_stable_row,
                                                          str_lisflood_folder,
-                                                         b_use_startfile)
+                                                         b_use_startfile,
+                                                         int_buffer_sec,
+                                                         int_cap)
 
         if str_par_file_to_run is not None:
-            fn_run_par_file(str_lisflood_folder, str_par_file_to_run, str_run_label,
-                            f"Running {next_row['parameter_file'][:-4]}")
+            try:
+                fn_run_capped(str_par_file_to_run, str_run_label,
+                              f"Running {next_row['parameter_file'][:-4]}",
+                              int_cap)
+            except LisfloodTimeout as e:
+                print(f"     -- HARD TIMEOUT: {e}; stopping the series here")
+                break
 
         row_prev = row
         ps_prev_stable_row = ps_first_stable_row
 
     if list_fallback_runs:
         print(f"     -- Runs accepted without passing the stability check: {', '.join(list_fallback_runs)}")
+
+    if list_capped_runs:
+        print(f"     -- Runs shortened by [lisflood_timeouts] limits: {', '.join(list_capped_runs)}")
 
     os.chdir(str_original_cwd)
 # .........................................................

@@ -12,6 +12,11 @@
 # revised - 2026.09.22 -- Refactored for single HUC-12 AOI polygon
 #                          (removes NextGen divide/flowpath lookups and all
 #                           lateral watershed logic)
+# revised - 2026.10.23 -- All WhiteboxTools calls via fn_run_whitebox (retry on failure);
+#                          retry settings from [whitebox] in global config
+# revised - 2026.10.23 -- Intensities: num_steps log progression between the
+#                          min and max precip COG values at the peak pixel
+# revised - 2026.10.26 -- Clear 02/03/04 folders of a previous run of the same HUC-12
 # ************************************************************
 
 # ************************************************************
@@ -25,7 +30,7 @@ from shapely.geometry import Point, mapping, LineString, box
 from shapely.ops import linemerge
 
 import rioxarray
-from whitebox import WhiteboxTools
+from whitebox_utils import fn_run_whitebox, fn_set_whitebox_retry
 import subprocess
 
 import shapely
@@ -535,6 +540,26 @@ def fn_logarithmic_progression(flt_min_q, flt_max_q, int_log_q_steps):
 # .................
 
 
+# .................
+def fn_log_intensity_progression(flt_min_mm_hr, flt_max_mm_hr, int_num_steps):
+    # num_steps rainfall intensities (mm/hr), log-spaced from min to max,
+    # rounded to 0.1 mm/hr; first and last are exactly min and max
+    if int_num_steps < 2:
+        raise ValueError(f'num_steps must be 2 or more, got {int_num_steps}')
+
+    arr_values = np.logspace(np.log10(flt_min_mm_hr), np.log10(flt_max_mm_hr), num=int_num_steps)
+    arr_values = np.round(arr_values, 1)
+    arr_values[0], arr_values[-1] = flt_min_mm_hr, flt_max_mm_hr
+
+    # rounding can collapse closely spaced low intensities -- drop duplicates
+    arr_unique = np.unique(arr_values)
+    if len(arr_unique) < int_num_steps:
+        print(f'     -- WARNING: {int_num_steps - len(arr_unique)} duplicate intensities removed '
+              f'after rounding; {len(arr_unique)} runs will be created')
+    return arr_unique
+# .................
+
+
 # -------------------
 def fn_get_fa_stats(fa):
     """
@@ -941,55 +966,40 @@ def fn_condition_terrain(dict_filepaths,
                          polygon,
                          str_url_roads):
 
-    wbt = WhiteboxTools()
-    
-    # This bypasses $HOME detection eon HPC -- 2026.03.04
-    wbt.set_whitebox_dir("/opt/whitebox_tools")
-    wbt.verbose = False  # print tool messages
-
-    # Now set the working directory
-    wbt.work_dir = str_out_folder_streams
+    # Every WhiteboxTools call goes through fn_run_whitebox (whitebox_utils.py),
+    # which retries transient failures (e.g. Rust panic, exit status 101)
+    # and deletes partial outputs between attempts -- 2026.10.23
+    # Calling the CLI directly also bypasses the whitebox Python package's
+    # $HOME detection on HPC (previously wbt.set_whitebox_dir) -- 2026.03.04
 
     # Step 1 -- Breach Depressions Least Cost
-    cmd = [
+    fn_run_whitebox([
         str_whitebox_path,
         "--run=BreachDepressionsLeastCost",
         f"--dem={dict_filepaths['dem_clipped']}",
         f"-o={dict_filepaths['dem_breach']}",
         f"--dist=2000",
         f"--max_cost=500",
-        f"--flat_increment=0.001"]
-
-    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+        f"--flat_increment=0.001"],
+        [dict_filepaths['dem_breach']])
 
     # Step 2 -- Flow Accumulation (Pass 01)
-    # --- Fill DEM depressions ---
-    wbt.fill_depressions(dict_filepaths['dem_breach'], dict_filepaths['dem_filled'])
-
-    # --- Flow direction ---
-    wbt.d8_pointer(dict_filepaths['dem_filled'], dict_filepaths['dem_fdir'])
-
-    # --- Flow accumulation (D8) ---
-    wbt.d8_flow_accumulation(dict_filepaths['dem_filled'], dict_filepaths['dem_fa'], out_type="cells")
+    fn_flow_accumulation(str_whitebox_path, dict_filepaths['dem_breach'], dict_filepaths)
 
     # Step 3 -- Stream Network (Pass 01)
     # --- Extract stream locations
-
-    cmd = [
+    fn_run_whitebox([
         str_whitebox_path,
         "--run=ExtractStreams",
         f"--flow_accum={dict_filepaths['dem_fa']}",
         f"--d8_pntr={dict_filepaths['dem_fdir']}",
         f"--output={dict_filepaths['stream_raster']}",
         f"--threshold={flt_threshold}",
-        "--zero_background"]
+        "--zero_background"],
+        [dict_filepaths['stream_raster']])
 
-    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
     # Convert raster streams to vector
-    wbt.verbose = False  # print tool messages
-    wbt.raster_streams_to_vector(dict_filepaths['stream_raster'],
-                                 dict_filepaths['dem_fdir'],
-                                 dict_filepaths['stream_vector'])
+    fn_streams_to_vector(str_whitebox_path, dict_filepaths)
 
     # Step 4 -- Burn Streams at Road 
 
@@ -999,8 +1009,7 @@ def fn_condition_terrain(dict_filepaths,
     # Save as Shapefile
     gdf_roads_clipped_5070.to_file(dict_filepaths['clipped_roads'], driver="ESRI Shapefile")
 
-
-    cmd = [
+    fn_run_whitebox([
         str_whitebox_path,
         "--run=BurnStreamsAtRoads",
         f"--dem={dict_filepaths['dem_breach']}",          # Input DEM (breached or preprocessed)
@@ -1008,9 +1017,8 @@ def fn_condition_terrain(dict_filepaths,
         f"--roads={dict_filepaths['clipped_roads']}",     # Vector roads (centerlines)
         f"--output={dict_filepaths['dem_burn_roads']}",    # Output DEM with burned culverts
         f"--width=20"           # Maximum road embankment width in map units
-    ]
-
-    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+        ],
+        [dict_filepaths['dem_burn_roads']])
 
     # Step 4b -- Fix diagonal burns for D4 compatibility
     # IMPORTANT: pass dem_clipped (the raw, pre-breach DEM) as the "before"
@@ -1028,36 +1036,69 @@ def fn_condition_terrain(dict_filepaths,
     dict_filepaths['dem_burn_roads'] = str_dem_burn_fixed
 
     # Step 5 -- Flow Accumulation (Pass 02)
-
-    # --- Fill DEM depressions ---
-    wbt.fill_depressions(dict_filepaths['dem_burn_roads'], dict_filepaths['dem_filled'])
-
-    # --- Flow direction ---
-    wbt.d8_pointer(dict_filepaths['dem_filled'], dict_filepaths['dem_fdir'])
-
-    # --- Flow accumulation (D8) ---
-    wbt.d8_flow_accumulation(dict_filepaths['dem_filled'], dict_filepaths['dem_fa'], out_type="cells")
-
+    fn_flow_accumulation(str_whitebox_path, dict_filepaths['dem_burn_roads'], dict_filepaths)
 
     # Step 6 -- Stream Network (Pass 02)
     # --- Extract stream locations
-
-    cmd = [
+    fn_run_whitebox([
         str_whitebox_path,
         "--run=ExtractStreams",
         f"--flow_accum={dict_filepaths['dem_fa']}",
         f"--d8_pntr={dict_filepaths['dem_filled']}",
         f"--output={dict_filepaths['stream_raster']}",
         f"--threshold={flt_threshold}",
-        "--zero_background"]
-
-    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+        "--zero_background"],
+        [dict_filepaths['stream_raster']])
 
     # Convert raster streams to vector
-    wbt.verbose = False  # print tool messages
-    wbt.raster_streams_to_vector(dict_filepaths['stream_raster'],
-                                 dict_filepaths['dem_fdir'],
-                                 dict_filepaths['stream_vector'])
+    fn_streams_to_vector(str_whitebox_path, dict_filepaths)
+# ...............................
+
+
+# ...............................
+def fn_flow_accumulation(str_whitebox_path, str_dem_in, dict_filepaths):
+    # Fill depressions, D8 pointer and D8 flow accumulation (cells)
+    # Same arguments the whitebox Python package used:
+    # fill_depressions (fix_flats=True), d8_pointer, d8_flow_accumulation(out_type="cells")
+
+    # --- Fill DEM depressions ---
+    fn_run_whitebox([
+        str_whitebox_path,
+        "--run=FillDepressions",
+        f"--dem={str_dem_in}",
+        f"--output={dict_filepaths['dem_filled']}",
+        "--fix_flats"],
+        [dict_filepaths['dem_filled']])
+
+    # --- Flow direction ---
+    fn_run_whitebox([
+        str_whitebox_path,
+        "--run=D8Pointer",
+        f"--dem={dict_filepaths['dem_filled']}",
+        f"--output={dict_filepaths['dem_fdir']}"],
+        [dict_filepaths['dem_fdir']])
+
+    # --- Flow accumulation (D8) ---
+    fn_run_whitebox([
+        str_whitebox_path,
+        "--run=D8FlowAccumulation",
+        f"--input={dict_filepaths['dem_filled']}",
+        f"--output={dict_filepaths['dem_fa']}",
+        "--out_type=cells"],
+        [dict_filepaths['dem_fa']])
+# ...............................
+
+
+# ...............................
+def fn_streams_to_vector(str_whitebox_path, dict_filepaths):
+    # Convert raster streams to vector
+    fn_run_whitebox([
+        str_whitebox_path,
+        "--run=RasterStreamsToVector",
+        f"--streams={dict_filepaths['stream_raster']}",
+        f"--d8_pntr={dict_filepaths['dem_fdir']}",
+        f"--output={dict_filepaths['stream_vector']}"],
+        [dict_filepaths['stream_vector']])
 # ...............................
 
 
@@ -1192,6 +1233,7 @@ def fn_prepare_input_layers_01(
             'default_manning_runs'
         ],
         'flow_parameters': [
+            'num_steps',
             'timesteps',
             'output_step',
             'mass_balance_step'
@@ -1215,6 +1257,11 @@ def fn_prepare_input_layers_01(
             key: section.get(key, '')
             for key in keys
         })
+
+    # Whitebox retry settings -- optional [whitebox] section, defaults 5 attempts / 5 sec
+    fn_set_whitebox_retry(
+        global_config.getint('whitebox', 'max_attempts', fallback=5),
+        global_config.getfloat('whitebox', 'retry_wait_sec', fallback=5.0))
 
     # ==================================================================
     # READ LOCAL CONFIG
@@ -1259,6 +1306,21 @@ def fn_prepare_input_layers_01(
 
     str_out_folder_streams = os.path.join(str_out_folder, '01_stream_delineation')
     str_out_folder_streams_02 = os.path.join(str_out_folder, '02_lisflood_input')
+
+    # Clear results of any earlier run of this HUC-12 -- 2026.10.26
+    # run_lisflood_02 runs every .par in 02_lisflood_input and build_netcdf_03
+    # stacks every geotiff, so leftovers from a run with a different num_steps
+    # would be mixed into this run
+    for str_folder_name in ['02_lisflood_input', '03_depth_nc', '04_healed_depth_nc']:
+        str_old_folder = os.path.join(str_out_folder, str_folder_name)
+        if os.path.isdir(str_old_folder):
+            shutil.rmtree(str_old_folder)
+            if b_print_output:
+                print(f'  -- STEP 0: Removed previous run folder: {str_old_folder}')
+    if os.path.isdir(str_out_folder_streams):
+        for path_old_nc in Path(str_out_folder_streams).glob(f'{str_catchment}_rainfall_pnt_*mm.nc'):
+            path_old_nc.unlink()
+
     os.makedirs(str_out_folder_streams, exist_ok=True)
     os.makedirs(str_out_folder_streams_02, exist_ok=True)
 
@@ -1390,7 +1452,7 @@ def fn_prepare_input_layers_01(
     
     # ..............
     if b_print_output:
-        print('  -- STEP 4: Determine rainfall loactions')
+        print('  -- STEP 4: Determine rainfall locations')
      
     # Each vertex in the "streams" shapefile is whithin the center of a cell in the 
     # flow accumulation grid.  Create a point shapefile that is all the vertex points
@@ -1614,10 +1676,19 @@ def fn_prepare_input_layers_01(
 
     # --- Merge, deduplicate, sort, convert to mm/hr ---
     list_all_inhr = sorted(set(list_intensity_by_duration_inhr + list_intensity_by_rp_inhr))
-    arr_intensity_mm_hr = np.array([round(x * 25.4, 1) for x in list_all_inhr])
+    arr_atlas_mm_hr = np.array([round(x * 25.4, 1) for x in list_all_inhr])
+
+    # --- num_steps log progression between the lowest and highest intensity ---
+    int_num_steps = int(dict_all_params['num_steps'])
+    arr_intensity_mm_hr = fn_log_intensity_progression(
+        float(arr_atlas_mm_hr.min()), float(arr_atlas_mm_hr.max()), int_num_steps)
+
+    if b_print_output:
+        print(f'     -- {len(arr_intensity_mm_hr)} intensities: '
+              f'{arr_intensity_mm_hr.min()} to {arr_intensity_mm_hr.max()} mm/hr')
     
     if b_print_output:
-        print('  -- STEP 9: Writing paramter and rainfall data')
+        print('  -- STEP 9: Writing parameter and rainfall data')
     
     int_timesteps = int(dict_all_params['timesteps'])
     int_output_step = int(dict_all_params['output_step'])
