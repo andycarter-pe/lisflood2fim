@@ -27,10 +27,13 @@ For convience, a container has been pre-built and pushed to DockerHub.  To pull 
 ```
 docker pull civileng127/lisflood2fim:20260424
 ```
+## Sample data
+`sample_data_in` holds lightweight inputs (about 16 MB) for one HUC-12, 121002030402 (Brushy Creek-Plum Creek, TX): the HUC-12 boundary, 3 m terrain, roads, Manning's n, and the two precipitation intensity grids, each clipped to the watershed. `config/demo_global_config.ini` and `config/demo_local_config.ini` point at these files and are the defaults for `lisflood2fim_huc12_00.py`, so the demo runs with no arguments (5 intensities, downscale 16; output goes to `sample_output/121002030402`).
+
 Run the containers demo: Note '/mnt/e/lisflood_dump' is the local directory where output will be saved
 ```
 docker run -it \
 -v /mnt/e/lisflood_dump:/mnt \
 civileng127/lisflood2fim:20260424 \
-bash -c "source /opt/miniconda/etc/profile.d/conda.sh && conda activate geo && cd /mnt && python /app/lisflood2fim/src/lisflood2fim_00.py"
+bash -c "source /opt/miniconda/etc/profile.d/conda.sh && conda activate geo && cd /mnt && python /app/lisflood2fim/src/lisflood2fim_huc12_00.py"
 ```

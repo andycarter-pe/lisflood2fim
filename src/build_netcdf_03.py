@@ -375,14 +375,16 @@ if __name__ == '__main__':
     parser.add_argument('-g',
                         dest = "str_global_config_file_path",
                         help=r'REQUIRED: Global configuration filepath Example:C:\Users\civil\dev\lisflood2fim\config\global_config.ini',
-                        required=True,
+                        required=False,
+                        default='/app/lisflood2fim/config/demo_global_config.ini',
                         metavar='FILE',
                         type=lambda x: is_valid_file(parser, x))
     
     parser.add_argument('-c',
                         dest = "str_local_config_file_path",
                         help=r'REQUIRED: LOCAL configuration filepath Example:C:\Users\civil\dev\lisflood2fim\config\local_config.ini',
-                        required=True,
+                        required=False,
+                        default='/app/lisflood2fim/config/demo_local_config.ini',
                         metavar='FILE',
                         type=lambda x: is_valid_file(parser, x))
     
