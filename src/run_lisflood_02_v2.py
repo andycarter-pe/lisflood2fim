@@ -10,6 +10,10 @@
 # Revised - 2026.10.24 -- run time limits from the [lisflood_timeouts] section of
 #                          the global config: cap on sim_time, wall-clock budget
 #                          per run, hard kill timeout, startfile retry mode
+# Revised - 2026.10.28 -- an unstable run is accepted (end of run used) and the
+#                          next run gets its full sim_time; min_sim_time_hr is
+#                          a floor on every run; per-intensity run log csv
+#                          (read by build_netcdf_03 into the netCDF)
 # ************************************************************
 
 # ************************************************************
@@ -181,6 +185,28 @@ def fn_get_stable_row(str_mass_balance_filepath, flt_expected_outflow, dict_all_
         return 'ok', matches.iloc[0]
 
     return 'no_match', df_mass.iloc[-1]
+# -----------------
+
+
+# -----------------
+def fn_get_final_qout_ratio(str_mass_balance_filepath, int_window):
+    # Qout / rain applied at the end of the run (the time of the saved depth grid)
+    try:
+        df_mass = pd.read_csv(str_mass_balance_filepath, sep=r"\s+", header=0)
+        flt_q_expected = (
+            df_mass["Rain-(Inf+Evap)"].diff() / df_mass["Time"].diff()
+        ).rolling(window=int_window, min_periods=1).mean().iloc[-1]
+        return float(df_mass["Qout"].iloc[-1] / flt_q_expected)
+    except Exception:
+        return float('nan')
+# -----------------
+
+
+# -----------------
+def fn_write_run_log(list_run_log, str_run_log_filepath):
+    # one row per accepted run; rewritten after each run so a series that
+    # stops early still has a log for the layers it made
+    pd.DataFrame(list_run_log).to_csv(str_run_log_filepath, index=False)
 # -----------------
 
 
@@ -384,7 +410,9 @@ def fn_prep_next_paramter_file(row,
                                str_lisflood_folder,
                                b_use_startfile,
                                int_buffer_sec=5400,
-                               int_max_sim_time_sec=None):
+                               int_max_sim_time_sec=None,
+                               int_min_sim_time_sec=0,
+                               b_prev_unstable=False):
 
     flt_time_to_stable = ps_first_stable_row['Time']
     # Round flt_time_to_stable to nearest integer
@@ -393,6 +421,16 @@ def fn_prep_next_paramter_file(row,
     # buffer for stabilization (was a hard coded 5400 s / 1.5 hours)
     # Revised 2026.10.24 -- from [lisflood_timeouts] stable_buffer_hr
     int_time_to_stable += int_buffer_sec
+
+    # Revised 2026.10.28 -- a run that never passed the stability check gives
+    # no time to stable, so the next run gets its own full sim_time
+    if b_prev_unstable and next_row is not None:
+        int_time_to_stable = int(fn_get_par_sim_time(next_row['filepath']))
+
+    # floor: an early (marginal) pass on the stability check must not leave
+    # the next run too short to settle
+    if int_min_sim_time_sec:
+        int_time_to_stable = max(int_time_to_stable, int(int_min_sim_time_sec))
 
     # cap the sim_time; without this an unstable run (which falls back to its
     # last row) makes every later run 1.5 hours longer than the one before
@@ -627,7 +665,8 @@ def fn_run_lisflood_02(
             'min_Qout_ratio',
             'max_Qout_ratio',
             'max_rolling_avg_stability',
-            'num_unchecked_runs'
+            'num_unchecked_runs',
+            'accept_unstable_runs'
         ]
     }
 
@@ -730,6 +769,13 @@ def fn_run_lisflood_02(
     
     str_num_runs = str(len(df_parameter_files))
     str_run_label = f"1 of {str_num_runs}: "
+
+    # per run (par file name): sim_time used, startfile used -- for the run log
+    dict_run_extra = {}
+    list_run_log = []
+    str_run_log_filepath = os.path.join(str_lisflood_folder, f"{str_catchment}_run_log.csv")
+    if os.path.isfile(str_run_log_filepath):
+        os.remove(str_run_log_filepath)
     
     if b_run_first_run:
         # --- First Run --- This is the lowest rainfall
@@ -764,6 +810,7 @@ def fn_run_lisflood_02(
 
         # model seconds per wall-clock second, used for the wall-clock budget
         flt_sim_speed = flt_first_sim_time / max(flt_loop_time, 1)
+        dict_run_extra[str_par_file_to_run] = {'sim_time_s': flt_first_sim_time, 'startfile': ''}
     else:
         flt_sim_speed = None
     
@@ -806,12 +853,19 @@ def fn_run_lisflood_02(
     str_unchecked = dict_all_params.get('num_unchecked_runs', '')
     int_num_unchecked_runs = int(str_unchecked) if str_unchecked != '' else 3
 
+    # Added 2026.10.28 -- True: any run that does not pass the stability check
+    # is accepted (end of run used, flagged in the run log); False: only the
+    # first 'num_unchecked_runs' are, and an unstable run after them stops the series
+    str_accept_unstable = dict_all_params.get('accept_unstable_runs', '')
+    b_accept_unstable = fn_str_to_bool(str_accept_unstable) if str_accept_unstable != '' else True
+
     str_mannings_asc_original = None
     str_mannings_modified     = None
     b_mannings_modified       = False
 
     row_prev = None
     ps_prev_stable_row = None
+    b_prev_unstable = False
     list_fallback_runs = []
     list_capped_runs = []
 
@@ -834,8 +888,13 @@ def fn_run_lisflood_02(
         # run one .par file; update the speed estimate; note capped runs
         nonlocal flt_sim_speed
         flt_sim_time = fn_get_par_sim_time(str_par_file)
-        if int_cap is not None and flt_sim_time >= int_cap:
+        if int_cap is not None and flt_sim_time >= int_cap and str_par_file[:-4] not in list_capped_runs:
             list_capped_runs.append(str_par_file[:-4])
+        df_par = pd.read_csv(str_par_file, sep=r"\s+", header=None, comment="#")
+        str_startfile = dict(zip(df_par[0], df_par[1])).get('startfile', '')
+        dict_run_extra[str_par_file] = {
+            'sim_time_s': flt_sim_time,
+            'startfile': '' if not isinstance(str_startfile, str) else str_startfile}
         flt_loop = fn_run_par_file(str_lisflood_folder, str_par_file, str_label,
                                    str_message, flt_hard_timeout_sec)
         flt_sim_speed = flt_sim_time / max(flt_loop, 1)
@@ -872,7 +931,9 @@ def fn_run_lisflood_02(
                                                              str_lisflood_folder,
                                                              b_use_startfile,
                                                              int_buffer_sec,
-                                                             int_cap)
+                                                             int_cap,
+                                                             int_min_sim_time_sec,
+                                                             b_prev_unstable)
 
             try:
                 fn_run_capped(str_par_file_to_run,
@@ -891,18 +952,34 @@ def fn_run_lisflood_02(
                 dict_all_params
             )
 
-        # --- low-intensity fallback: accept the end of the run ---
+        # --- fallback: accept the end of the run, flagged as unstable ---
+        b_unstable = False
         if (str_stable_row_status == 'no_match'
-                and index < int_num_unchecked_runs):
+                and (b_accept_unstable or index < int_num_unchecked_runs)):
 
             print(f"     -- WARNING: {row['parameter_file'][:-4]} did not meet the "
                   f"stability check; using final time {ps_first_stable_row['Time']:.0f} s")
             list_fallback_runs.append(row['parameter_file'][:-4])
             str_stable_row_status = 'ok'
+            b_unstable = True
 
         if str_stable_row_status != 'ok':
             print(f"     -- Stable Run not found: {row['parameter_file'][:-4]} Status: {str_stable_row_status}")
             break
+
+        # --- run log (one row per depth layer) ---
+        dict_extra = dict_run_extra.get(row['parameter_file'], {})
+        list_run_log.append({
+            'intensity': round(float(row['intensity']), 1),
+            'run_name': row['parameter_file'][:-4],
+            'stable': 0 if b_unstable else 1,
+            'time_to_stable_s': float('nan') if b_unstable else float(ps_first_stable_row['Time']),
+            'sim_time_s': dict_extra.get('sim_time_s', float('nan')),
+            'qout_ratio_final': round(fn_get_final_qout_ratio(row['mass_balance_filepath'],
+                                                              int(dict_all_params['window'])), 4),
+            'startfile': dict_extra.get('startfile', ''),
+        })
+        fn_write_run_log(list_run_log, str_run_log_filepath)
 
         # -------------------------------------------------------
         # Manning's transition: after the Nth default-Manning run,
@@ -975,7 +1052,9 @@ def fn_run_lisflood_02(
                                                          str_lisflood_folder,
                                                          b_use_startfile,
                                                          int_buffer_sec,
-                                                         int_cap)
+                                                         int_cap,
+                                                         int_min_sim_time_sec,
+                                                         b_unstable)
 
         if str_par_file_to_run is not None:
             try:
@@ -988,6 +1067,7 @@ def fn_run_lisflood_02(
 
         row_prev = row
         ps_prev_stable_row = ps_first_stable_row
+        b_prev_unstable = b_unstable
 
     if list_fallback_runs:
         print(f"     -- Runs accepted without passing the stability check: {', '.join(list_fallback_runs)}")

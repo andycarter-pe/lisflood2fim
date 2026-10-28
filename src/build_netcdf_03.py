@@ -6,12 +6,15 @@
 # Created - 2026.02.07
 # Modified - 2026.03.16 -- flt_min_depth_allowed = 0.025 *Mannual to this file*
 # Modified - 2026.06.04 -- Terrain changed to dem_burn_roads_d4fixed_5070.asc
+# Modified - 2026.10.28 -- stability of each depth layer (from the run log
+#                           written by run_lisflood_02_v2) added to the netCDF
 # ************************************************************
 
 # ************************************************************
 import rioxarray as rxr
 import xarray as xr
 import numpy as np
+import pandas as pd
 import os
 import re
 import subprocess
@@ -129,6 +132,55 @@ def fn_get_sorted_geotiffs_and_intensities(folder):
     intensities = [r[0] for r in records]
 
     return filepaths, intensities
+# --------------------
+
+
+# --------------------
+def fn_add_stability_layers(ds, str_run_log_filepath, arr_intensities):
+    # Adds per-intensity variables from the run log:
+    #   stable_flag       1 = passed the stability check, 0 = unstable (end
+    #                     of run used), -1 = no run log entry
+    #   time_to_stable    seconds (NaN if unstable)
+    #   sim_time          seconds simulated
+    #   qout_ratio_final  Qout / rain applied at the end of the run
+    # Returns the list of unstable intensities, or None if there is no log.
+
+    int_n = len(arr_intensities)
+    arr_flag = np.full(int_n, -1, dtype=np.int8)
+    arr_t_stable = np.full(int_n, np.nan, dtype=np.float32)
+    arr_sim_time = np.full(int_n, np.nan, dtype=np.float32)
+    arr_ratio = np.full(int_n, np.nan, dtype=np.float32)
+
+    if not os.path.isfile(str_run_log_filepath):
+        return None
+
+    df_log = pd.read_csv(str_run_log_filepath)
+    dict_log = {round(float(r['intensity']), 1): r for _, r in df_log.iterrows()}
+
+    for i, flt_intensity in enumerate(arr_intensities):
+        r = dict_log.get(round(float(flt_intensity), 1))
+        if r is None:
+            continue
+        arr_flag[i] = int(r['stable'])
+        arr_t_stable[i] = r['time_to_stable_s']
+        arr_sim_time[i] = r['sim_time_s']
+        arr_ratio[i] = r['qout_ratio_final']
+
+    ds['stable_flag'] = ('intensity', arr_flag)
+    ds['stable_flag'].attrs = {
+        'long_name': 'LISFLOOD-FP run passed the steady state check',
+        'flag_values': np.array([-1, 0, 1], dtype=np.int8),
+        'flag_meanings': 'unknown unstable stable',
+        'comment': 'unstable = no steady state found; depth is the end of the run'}
+    ds['time_to_stable'] = ('intensity', arr_t_stable)
+    ds['time_to_stable'].attrs = {'long_name': 'simulated time to steady state', 'units': 's'}
+    ds['sim_time'] = ('intensity', arr_sim_time)
+    ds['sim_time'].attrs = {'long_name': 'simulated time of the run', 'units': 's'}
+    ds['qout_ratio_final'] = ('intensity', arr_ratio)
+    ds['qout_ratio_final'].attrs = {
+        'long_name': 'outflow / net rain applied at the end of the run', 'units': '1'}
+
+    return [float(v) for v, f in zip(arr_intensities, arr_flag) if f == 0]
 # --------------------
 
 
@@ -319,6 +371,12 @@ def fn_build_netcdf_03(
     ds[str_type].attrs['units'] = str_raster_vertical_units
     ds['terrain'].attrs['units'] = str_raster_vertical_units
     ds.coords['intensity'].attrs['units'] = str_intensity_units
+
+    # -----------------------------
+    # STABILITY OF EACH DEPTH LAYER
+    # -----------------------------
+    str_run_log_filepath = os.path.join(root_dir, f"{str_catchment}_run_log.csv")
+    list_unstable = fn_add_stability_layers(ds, str_run_log_filepath, list_intensities)
     
     # -----------------------------
     # OUTPUT FOLDER
@@ -351,6 +409,11 @@ def fn_build_netcdf_03(
     ds.attrs['05_institution'] = 'University of Texas at Austin'
     ds.attrs['06_history'] = (f"Created on {datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}")
     ds.attrs['07_raster_folder'] = folder
+    if list_unstable is None:
+        ds.attrs['08_unstable_intensities'] = 'unknown (no run log)'
+    else:
+        ds.attrs['08_unstable_intensities'] = (
+            ', '.join(f"{v:g}" for v in list_unstable) if list_unstable else 'none')
     
     ds.to_netcdf(str_netcdf_filepath)
     
