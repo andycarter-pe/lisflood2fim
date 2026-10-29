@@ -1,11 +1,13 @@
 ################################################################################
-# LISFLOOD-FP v8.1 + WhiteboxTools v2.4.0 Dockerfile (Mamba + TOS fix)
+# LISFLOOD-FP v8.1 + WhiteboxTools v2.4.0 Dockerfile (conda-forge + TOS fix)
 #
 # Features:
 #   - LISFLOOD-FP compiled with OpenMP, NetCDF, and NUMA support
 #   - LISFLOOD-FP executable in /usr/local/bin
 #   - WhiteboxTools installed as /opt/whitebox_tools and symlink wbt
-#   - Miniconda3 + mamba for fast geospatial Python environment
+#   - Miniconda3 geospatial Python environment from conda-forge only
+#     (2026.10.29 -- mamba dropped: an unpinned conda-forge mamba segfaulted
+#      reading repo.anaconda.com pkgs/main; conda's libmamba solver is used)
 ################################################################################
 
 # Base image
@@ -69,21 +71,19 @@ RUN curl -L -o Miniconda3-py311.sh https://repo.anaconda.com/miniconda/Miniconda
 ENV PATH="/opt/miniconda/bin:$PATH"
 
 # -------------------------------
-# Accept Conda TOS and install Mamba
+# Accept Conda TOS
 # -------------------------------
 RUN conda config --set always_yes yes --set changeps1 no \
     && conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main \
-    && conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r \
-    && conda install -n base -c conda-forge mamba \
-    && conda clean -afy
+    && conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
 
 # -------------------------------
-# Create 'geo' environment with Mamba (fast!)
+# Create 'geo' environment from conda-forge only (libmamba solver)
 # -------------------------------
-RUN mamba create -y -n geo -c conda-forge python=3.11 \
+RUN conda create -y -n geo --override-channels -c conda-forge python=3.11 \
     numpy pandas geopandas rasterio rioxarray shapely fiona pyogrio \
-    netCDF4 gdal proj pyproj \
-    && mamba clean -afy
+    netCDF4 gdal proj pyproj scipy \
+    && conda clean -afy
 
 # Activate geo for all subsequent RUN commands
 SHELL ["conda", "run", "-n", "geo", "/bin/bash", "-c"]
@@ -95,7 +95,7 @@ RUN pip install --no-cache-dir whitebox
 RUN python -c "import whitebox; whitebox.WhiteboxTools(); print('WhiteboxTools initialized')"
 
 # Verify Python geospatial stack
-RUN python -c "import numpy, pandas, geopandas, rasterio, rioxarray, shapely, fiona, pyogrio, netCDF4; import whitebox; print('Geo environment OK')"
+RUN python -c "import numpy, pandas, geopandas, rasterio, rioxarray, shapely, fiona, pyogrio, netCDF4, scipy; import whitebox; print('Geo environment OK')"
 
 # Initialize conda for interactive bash shells
 RUN /opt/miniconda/bin/conda init bash
