@@ -81,8 +81,8 @@ RUN conda config --set always_yes yes --set changeps1 no \
 # Create 'geo' environment from conda-forge only (libmamba solver)
 # -------------------------------
 RUN conda create -y -n geo --override-channels -c conda-forge python=3.11 \
-    numpy pandas geopandas rasterio rioxarray shapely fiona pyogrio \
-    netCDF4 gdal proj pyproj scipy \
+    numpy pandas geopandas rasterio rioxarray xarray shapely fiona pyogrio \
+    netCDF4 gdal proj pyproj scipy pillow \
     && conda clean -afy
 
 # Activate geo for all subsequent RUN commands
@@ -91,11 +91,14 @@ SHELL ["conda", "run", "-n", "geo", "/bin/bash", "-c"]
 # Optional: Install Whitebox Python package
 RUN pip install --no-cache-dir whitebox
 
+# PMTiles writer for build_pmtiles_06 (2026.11.10)
+RUN pip install --no-cache-dir pmtiles
+
 # Trigger WhiteboxTools initialization
 RUN python -c "import whitebox; whitebox.WhiteboxTools(); print('WhiteboxTools initialized')"
 
 # Verify Python geospatial stack
-RUN python -c "import numpy, pandas, geopandas, rasterio, rioxarray, shapely, fiona, pyogrio, netCDF4, scipy; import whitebox; print('Geo environment OK')"
+RUN python -c "import numpy, pandas, geopandas, rasterio, rioxarray, xarray, shapely, fiona, pyogrio, netCDF4, scipy, PIL, pmtiles; import whitebox; print('Geo environment OK')"
 
 # Initialize conda for interactive bash shells
 RUN /opt/miniconda/bin/conda init bash

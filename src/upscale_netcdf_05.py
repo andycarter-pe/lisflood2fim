@@ -33,9 +33,10 @@
 # the full resolution pixels; the fine terrain is block-averaged to that
 # grid first.
 #
-# Run on its own after lisflood2fim_huc12_00 (it is not part of that
-# stack).  Settings come from the [upscale] section of the global config
-# and the terrain from [datasource] vrt_terrain; the input is
+# Runs as the last step of lisflood2fim_huc12_00 (after heal_netcdf_04),
+# or on its own with the same -g / -c / -r arguments.  Settings come from
+# the [upscale] section of the global config and the terrain from
+# [datasource] vrt_terrain; the input is
 # <out_root_folder>/<catchment>/04_healed_depth_nc/depth_<catchment>.nc and
 # the output goes to 05_upscaled_depth_nc/depth_<catchment>.nc
 #
@@ -43,6 +44,7 @@
 # Created - 2026.10.28
 # Revised - 2026.10.28 -- reads the global / local config like scripts 01-04;
 #                          per-intensity stability variables carried over
+# Revised - 2026.11.10 -- called as step 05 of lisflood2fim_huc12_00
 # ************************************************************
 
 # ************************************************************

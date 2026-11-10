@@ -17,6 +17,7 @@
 # revised - 2026.10.23 -- Intensities: num_steps log progression between the
 #                          min and max precip COG values at the peak pixel
 # revised - 2026.10.26 -- Clear 02/03/04 folders of a previous run of the same HUC-12
+# revised - 2026.11.10 -- Also clear 05_upscaled_depth_nc and 06_pmtiles
 # ************************************************************
 
 # ************************************************************
@@ -1311,7 +1312,10 @@ def fn_prepare_input_layers_01(
     # run_lisflood_02 runs every .par in 02_lisflood_input and build_netcdf_03
     # stacks every geotiff, so leftovers from a run with a different num_steps
     # would be mixed into this run
-    for str_folder_name in ['02_lisflood_input', '03_depth_nc', '04_healed_depth_nc']:
+    # 05_upscaled_depth_nc added 2026.11.10 (upscale_netcdf_05 is now part of the run)
+    # 06_pmtiles added 2026.11.10 (build_pmtiles_06 is now part of the run)
+    for str_folder_name in ['02_lisflood_input', '03_depth_nc', '04_healed_depth_nc',
+                            '05_upscaled_depth_nc', '06_pmtiles']:
         str_old_folder = os.path.join(str_out_folder, str_folder_name)
         if os.path.isdir(str_old_folder):
             shutil.rmtree(str_old_folder)
