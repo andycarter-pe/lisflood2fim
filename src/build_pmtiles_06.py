@@ -34,6 +34,8 @@
 # Created by: Andy Carter, PE
 # Created - 2026.11.10 -- from netcdf_to_pmtiles_batch.py; single catchment,
 #                          reads the global / local config like scripts 01-05
+# Revised - 2026.11.10 -- falls back to one layer at a time when a process
+#                          pool can't be made (no /dev/shm in Apptainer)
 # ************************************************************
 
 # ************************************************************
@@ -371,14 +373,26 @@ def fn_build_pmtiles(str_netcdf_path, str_out_folder, str_catchment,
             else:
                 print(f"     -- [{int_done}/{len(list_tasks)}] ERROR {str_name}: {str_err}")
 
-    if int_workers <= 1:
+    # A process pool needs a working /dev/shm (POSIX semaphores); some
+    # containers (e.g. Apptainer with --cleanenv / --no-mount) do not have
+    # one, so fall back to one layer at a time -- 2026.11.10
+    pool = None
+    if int_workers > 1:
+        try:
+            pool = ProcessPoolExecutor(max_workers=int_workers)
+        except (OSError, NotImplementedError, ImportError) as exc:
+            print(f"  -- WARNING: process pool not available ({type(exc).__name__}: {exc}); "
+                  f"building one layer at a time")
+            pool = None
+
+    if pool is None:
         for dict_task in list_tasks:
             tup_result = fn_worker(dict_task)
             int_done += 1
             list_results.append(tup_result)
             fn_report(tup_result)
     else:
-        with ProcessPoolExecutor(max_workers=int_workers) as pool:
+        with pool:
             list_futures = [pool.submit(fn_worker, dict_task) for dict_task in list_tasks]
             for future in as_completed(list_futures):
                 tup_result = future.result()
