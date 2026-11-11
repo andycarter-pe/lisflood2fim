@@ -4,7 +4,7 @@
 <img src="/doc/lisflood2fim-logo-20260209.png" align="right"
      alt="lisflood2fim logo" width="160" height="160">
 
-**Description**:  LISFLOOD2FIM creates Flood Inundation Maps (FIMs) indexed to various excess rainfall rates for a given catchment (watershed). The initial routine determines the stream network on which to apply the excess precipitation. This requires hydro-enforcement through dams and roadways. Input data needed for LISFLOOD-FP is then created, including parameters, terrain, boundary conditions, and stream-centric rainfall..<br><br>
+**Description**:  LISFLOOD2FIM creates Flood Inundation Maps (FIMs) indexed to various excess rainfall rates for a given catchment (watershed). The initial routine determines the stream network on which to apply the excess precipitation. This requires hydro-enforcement through dams and roadways. Input data needed for LISFLOOD-FP is then created, including parameters, terrain, boundary conditions, and stream-centric rainfall.<br><br>
 Simulations are run using LISFLOOD-FP v8.1.0 to a point of “stability,” where inflow rainfall equals the outflow rate. This process is repeated for various excess rainfall intensities. The resulting “stable” flood depths for each intensity are aggregated into a single data cube (NetCDF), representing flood depth across multiple intensities over the watershed. <br><br>
 These scripts were developed in support of the National Weather Service (Research Project NA22NWS4320003 / A25-0366-S018).
 
@@ -25,15 +25,15 @@ docker build -t lisflood2fim_huc12 .
 ## Docker Container
 For convience, a container has been pre-built and pushed to DockerHub.  To pull this container to your machine...
 ```
-docker pull civileng127/lisflood2fim_huc12:20261028
+docker pull civileng127/lisflood2fim_huc12:20261110
 ```
 ## Sample data
-`sample_data_in` holds lightweight inputs (about 16 MB) for one HUC-12, 121002030402 (Brushy Creek-Plum Creek, TX): the HUC-12 boundary, 3 m terrain, roads, Manning's n, and the two precipitation intensity grids, each clipped to the watershed. `config/demo_global_config.ini` and `config/demo_local_config.ini` point at these files and are the defaults for `lisflood2fim_huc12_00.py`, so the demo runs with no arguments (5 intensities, downscale 16; output goes to `sample_output/121002030402`).
+`sample_data_in` holds inputs (about 16 MB) for one HUC-12, 121002030402 (Brushy Creek-Plum Creek, TX): the HUC-12 boundary, 3 m terrain, roads, Manning's n, and the two precipitation intensity grids, each clipped to the watershed. `config/demo_global_config.ini` and `config/demo_local_config.ini` point at these files and are the defaults for `lisflood2fim_huc12_00.py`, so the demo runs with no arguments (5 intensities, downscale 16; output goes to `sample_output/121002030402`).
 
 Run the containers demo: Note '/mnt/e/lisflood_dump' is the local directory where output will be saved
 ```
 docker run -it \
 -v /mnt/e/lisflood_dump:/mnt \
-civileng127/lisflood2fim_huc12:20261028 \
+civileng127/lisflood2fim_huc12:20261110 \
 bash -c "source /opt/miniconda/etc/profile.d/conda.sh && conda activate geo && cd /mnt && python /app/lisflood2fim/src/lisflood2fim_huc12_00.py"
 ```
